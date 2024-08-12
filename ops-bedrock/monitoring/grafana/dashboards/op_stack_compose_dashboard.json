@@ -569,6 +569,7 @@
         "type": "prometheus",
         "uid": "ddshms3dlineoe"
       },
+      "description": "TODO: why are batchertx events 2x txs sent?",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -658,9 +659,43 @@
           "range": true,
           "refId": "A",
           "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "ddshms3dlineoe"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "op_batcher_default_txmgr_confirm_total",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "{{__name__}}",
+          "range": true,
+          "refId": "B",
+          "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "ddshms3dlineoe"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "op_batcher_default_txmgr_current_nonce",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "{{__name__}}",
+          "range": true,
+          "refId": "C",
+          "useBackend": false
         }
       ],
-      "title": "Count of BatcherTx events",
+      "title": "Batcher Txs",
       "type": "timeseries"
     },
     {
