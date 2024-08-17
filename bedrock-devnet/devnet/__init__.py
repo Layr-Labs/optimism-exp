@@ -173,11 +173,7 @@ def devnet_l2_allocs(paths):
 def devnet_deploy(paths):
 
     log.info('Starting peripheral telemetry services.')
-    run_command(['docker', 'compose', 'up', '-d', 'prometheus'], cwd=paths.ops_bedrock_dir, env={
-        'PWD': paths.ops_bedrock_dir
-    })
-
-    run_command(['docker', 'compose', 'up', '-d', 'grafana'], cwd=paths.ops_bedrock_dir, env={
+    run_command(['docker', 'compose', 'up', '-d', 'prometheus', 'grafana', 'loki', 'promtail'], cwd=paths.ops_bedrock_dir, env={
         'PWD': paths.ops_bedrock_dir
     })
 

@@ -1,30 +1,33 @@
 global:
-  scrape_interval:     15s
+  scrape_interval: 15s
   evaluation_interval: 15s
 
 scrape_configs:
-  - job_name: 'l1-geth'
+  - job_name: "l1-geth"
     static_configs:
-    - targets: ['l1:6060']
-  - job_name: 'l2-geth'
+      - targets: ["l1:6060"]
+  - job_name: "l2-geth"
     static_configs:
-    - targets: ['l2:6060']
-  - job_name: 'op-node'
+      - targets: ["l2:6060"]
+  - job_name: "op-node"
     static_configs:
-    - targets: ['op-node:7300']
+      - targets: ["op-node:7300"]
 
-  - job_name: 'op-batcher'
+  - job_name: "op-batcher"
+    # override 15s default to get fine grained info about frames and channels
+    # l2 blocks are built every 2s so 2s scrape should be sufficient
+    scrape_interval: 2s
     static_configs:
-    - targets: ['op-batcher:7300']
+      - targets: ["op-batcher:7300"]
 
-  - job_name: 'op-proposer'
+  - job_name: "op-proposer"
     static_configs:
-    - targets: ['op-proposer:7300']
+      - targets: ["op-proposer:7300"]
 
-  - job_name: 'op-geth'
+  - job_name: "op-geth"
     static_configs:
-    - targets: ['op-geth:7300']
+      - targets: ["op-geth:7300"]
 
-  - job_name: 'eigenda-proxy'
+  - job_name: "eigenda-proxy"
     static_configs:
-    - targets: ['da-server:6969']
+      - targets: ["da-server:6969"]

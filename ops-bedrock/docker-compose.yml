@@ -188,9 +188,9 @@ services:
       OP_BATCHER_L1_ETH_RPC: http://l1:8545
       OP_BATCHER_L2_ETH_RPC: http://l2:8545
       OP_BATCHER_ROLLUP_RPC: http://op-node:8545
-      OP_BATCHER_MAX_CHANNEL_DURATION: 2
+      OP_BATCHER_MAX_CHANNEL_DURATION: 10
       OP_BATCHER_SUB_SAFETY_MARGIN: 4 # SWS is 15, ChannelTimeout is 40
-      OP_BATCHER_POLL_INTERVAL: 1s
+      OP_BATCHER_POLL_INTERVAL: 2s
       OP_BATCHER_NUM_CONFIRMATIONS: 1
       OP_BATCHER_MNEMONIC: test test test test test test test test test test test junk
       OP_BATCHER_SEQUENCER_HD_PATH: "m/44'/60'/0'/0/2"
@@ -275,6 +275,25 @@ services:
       # - prometheus_data:/prometheus
     ports:
       - 9090:9090
+
+  loki:
+    image: grafana/loki:3.1.1
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/loki:/etc/loki
+    ports:
+      - 3100:3100
+    command: -config.file=/etc/loki/config.yaml
+
+  promtail:
+    image: grafana/promtail:3.1.1
+    restart: unless-stopped
+    volumes:
+      # uncomment to scrape system logs
+      # - /var/log:/var/log
+      - ./monitoring/promtail:/etc/promtail
+      - /var/run/docker.sock:/var/run/docker.sock # Mount Docker socket to read container logs
+    command: -config.file=/etc/promtail/config.yaml
 
   sentinel:
     image: quarry/sentinel # TODO(10141): We need a public image for this (sentinel is out of repo)
