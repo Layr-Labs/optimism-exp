@@ -1025,14 +1025,90 @@
     },
     {
       "datasource": {
+        "type": "prometheus",
+        "uid": "ddshms3dlineoe"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 12,
+        "x": 12,
+        "y": 33
+      },
+      "id": 25,
+      "interval": "2s",
+      "options": {
+        "displayMode": "basic",
+        "maxVizHeight": 300,
+        "minVizHeight": 16,
+        "minVizWidth": 8,
+        "namePlacement": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true,
+        "sizing": "auto",
+        "valueMode": "color"
+      },
+      "pluginVersion": "11.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "ddshms3dlineoe"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "op_batcher_default_blob_used_bytes_bucket",
+          "format": "heatmap",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": false,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B",
+          "useBackend": false
+        }
+      ],
+      "title": "Blob sizes",
+      "type": "bargauge"
+    },
+    {
+      "datasource": {
         "type": "loki",
-        "uid": "cdv4u7enxfthce"
+        "uid": "loki-datasource"
       },
       "gridPos": {
         "h": 10,
         "w": 24,
         "x": 0,
-        "y": 41
+        "y": 45
       },
       "id": 24,
       "options": {
@@ -1050,10 +1126,9 @@
         {
           "datasource": {
             "type": "loki",
-            "uid": "cdv4u7enxfthce"
+            "uid": "loki-datasource"
           },
-          "editorMode": "builder",
-          "expr": "{container=\"ops-bedrock-op-batcher-1\"} |= ``",
+          "expr": "{container=\"ops-bedrock-op-batcher-1\"}",
           "queryType": "range",
           "refId": "A"
         }
@@ -1067,7 +1142,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 51
+        "y": 55
       },
       "id": 6,
       "panels": [],
@@ -1105,7 +1180,7 @@
         "h": 4,
         "w": 5,
         "x": 0,
-        "y": 52
+        "y": 56
       },
       "id": 7,
       "options": {
@@ -1181,7 +1256,7 @@
         "h": 4,
         "w": 5,
         "x": 5,
-        "y": 52
+        "y": 56
       },
       "id": 10,
       "options": {
@@ -1257,7 +1332,7 @@
         "h": 4,
         "w": 5,
         "x": 10,
-        "y": 52
+        "y": 56
       },
       "id": 9,
       "options": {
@@ -1378,7 +1453,7 @@
         "h": 8,
         "w": 9,
         "x": 15,
-        "y": 52
+        "y": 56
       },
       "id": 13,
       "options": {
@@ -1430,8 +1505,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red",
-                "value": null
+                "color": "red"
               },
               {
                 "color": "green",
@@ -1446,7 +1520,7 @@
         "h": 4,
         "w": 5,
         "x": 0,
-        "y": 56
+        "y": 60
       },
       "id": 8,
       "options": {
@@ -1506,8 +1580,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red",
-                "value": null
+                "color": "red"
               },
               {
                 "color": "green",
@@ -1522,7 +1595,7 @@
         "h": 4,
         "w": 5,
         "x": 5,
-        "y": 56
+        "y": 60
       },
       "id": 11,
       "options": {
@@ -1582,8 +1655,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red",
-                "value": null
+                "color": "red"
               },
               {
                 "color": "green",
@@ -1598,7 +1670,7 @@
         "h": 4,
         "w": 5,
         "x": 10,
-        "y": 56
+        "y": 60
       },
       "id": 12,
       "options": {
@@ -1649,7 +1721,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 60
+        "y": 64
       },
       "id": 5,
       "panels": [],
@@ -1691,7 +1763,7 @@
         "h": 4,
         "w": 6,
         "x": 0,
-        "y": 61
+        "y": 65
       },
       "id": 3,
       "options": {
@@ -1811,7 +1883,7 @@
         "h": 8,
         "w": 9,
         "x": 6,
-        "y": 61
+        "y": 65
       },
       "id": 1,
       "options": {
@@ -1924,7 +1996,7 @@
         "h": 8,
         "w": 9,
         "x": 15,
-        "y": 61
+        "y": 65
       },
       "id": 2,
       "options": {
@@ -1995,7 +2067,7 @@
         "h": 4,
         "w": 6,
         "x": 0,
-        "y": 65
+        "y": 69
       },
       "id": 4,
       "options": {
