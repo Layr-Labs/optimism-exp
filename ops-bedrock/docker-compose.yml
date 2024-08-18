@@ -188,10 +188,11 @@ services:
       OP_BATCHER_L1_ETH_RPC: http://l1:8545
       OP_BATCHER_L2_ETH_RPC: http://l2:8545
       OP_BATCHER_ROLLUP_RPC: http://op-node:8545
-      OP_BATCHER_MAX_CHANNEL_DURATION: 10
+      OP_BATCHER_MAX_CHANNEL_DURATION: 10 # 10 L1 blocks = 60 seconds
       OP_BATCHER_SUB_SAFETY_MARGIN: 4 # SWS is 15, ChannelTimeout is 40
       OP_BATCHER_POLL_INTERVAL: 2s
       OP_BATCHER_NUM_CONFIRMATIONS: 1
+      OP_BATCHER_MAX_PENDING_TX: 0 # no limit
       OP_BATCHER_MNEMONIC: test test test test test test test test test test test junk
       OP_BATCHER_SEQUENCER_HD_PATH: "m/44'/60'/0'/0/2"
       OP_BATCHER_PPROF_ENABLED: "true"
@@ -204,6 +205,7 @@ services:
       # uncomment to use blobs
       # (requires L1 Dencun and L2 Ecotone activation first)
       # OP_BATCHER_DATA_AVAILABILITY_TYPE: blobs
+      # OP_BATCHER_TARGET_NUM_FRAMES: 3
 
   op-challenger:
     depends_on:
