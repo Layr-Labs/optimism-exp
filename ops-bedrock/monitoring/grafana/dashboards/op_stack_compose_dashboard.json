@@ -21,11 +21,98 @@
   "links": [],
   "panels": [
     {
+      "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
         "y": 0
+      },
+      "id": 31,
+      "panels": [],
+      "title": "Logs",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki-datasource"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 30,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": false,
+        "sortOrder": "Descending",
+        "wrapLogMessage": false
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki-datasource"
+          },
+          "editorMode": "builder",
+          "expr": "{container=\"ops-bedrock-da-server-1\"} |= ``",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "eigenda-proxy logs",
+      "type": "logs"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "loki-datasource"
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 24,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": true,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": false,
+        "sortOrder": "Descending",
+        "wrapLogMessage": false
+      },
+      "pluginVersion": "11.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "loki-datasource"
+          },
+          "expr": "{container=\"ops-bedrock-op-batcher-1\"}",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Batcher Logs",
+      "type": "logs"
+    },
+    {
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 19
       },
       "id": 27,
       "title": "EigenDA Proxy",
@@ -94,7 +181,7 @@
         "h": 10,
         "w": 12,
         "x": 0,
-        "y": 1
+        "y": 20
       },
       "id": 28,
       "options": {
@@ -157,7 +244,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 1
+        "y": 20
       },
       "id": 29,
       "options": {
@@ -198,49 +285,12 @@
       "type": "bargauge"
     },
     {
-      "datasource": {
-        "type": "loki",
-        "uid": "loki-datasource"
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 24,
-        "x": 0,
-        "y": 11
-      },
-      "id": 30,
-      "options": {
-        "dedupStrategy": "none",
-        "enableLogDetails": true,
-        "prettifyLogMessage": false,
-        "showCommonLabels": false,
-        "showLabels": false,
-        "showTime": false,
-        "sortOrder": "Descending",
-        "wrapLogMessage": false
-      },
-      "targets": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "loki-datasource"
-          },
-          "editorMode": "builder",
-          "expr": "{container=\"ops-bedrock-da-server-1\"} |= ``",
-          "queryType": "range",
-          "refId": "A"
-        }
-      ],
-      "title": "eigenda-proxy logs",
-      "type": "logs"
-    },
-    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 19
+        "y": 30
       },
       "id": 14,
       "panels": [],
@@ -310,7 +360,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 20
+        "y": 31
       },
       "id": 20,
       "interval": "2s",
@@ -410,7 +460,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 20
+        "y": 31
       },
       "id": 19,
       "interval": "2s",
@@ -527,7 +577,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 28
+        "y": 39
       },
       "id": 17,
       "interval": "2s",
@@ -645,7 +695,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 28
+        "y": 39
       },
       "id": 16,
       "interval": "2s",
@@ -745,7 +795,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 36
+        "y": 47
       },
       "id": 18,
       "interval": "2s",
@@ -814,7 +864,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 36
+        "y": 47
       },
       "id": 25,
       "interval": "2s",
@@ -864,7 +914,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 48
+        "y": 59
       },
       "id": 26,
       "panels": [],
@@ -935,7 +985,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 49
+        "y": 60
       },
       "id": 21,
       "interval": "2s",
@@ -1053,7 +1103,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 49
+        "y": 60
       },
       "id": 15,
       "interval": "2s",
@@ -1188,7 +1238,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 57
+        "y": 68
       },
       "id": 23,
       "interval": "2s",
@@ -1289,7 +1339,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 57
+        "y": 68
       },
       "id": 22,
       "interval": "2s",
@@ -1327,49 +1377,12 @@
       "type": "timeseries"
     },
     {
-      "datasource": {
-        "type": "loki",
-        "uid": "loki-datasource"
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 24,
-        "x": 0,
-        "y": 65
-      },
-      "id": 24,
-      "options": {
-        "dedupStrategy": "none",
-        "enableLogDetails": true,
-        "prettifyLogMessage": false,
-        "showCommonLabels": false,
-        "showLabels": false,
-        "showTime": false,
-        "sortOrder": "Descending",
-        "wrapLogMessage": false
-      },
-      "pluginVersion": "11.1.0",
-      "targets": [
-        {
-          "datasource": {
-            "type": "loki",
-            "uid": "loki-datasource"
-          },
-          "expr": "{container=\"ops-bedrock-op-batcher-1\"}",
-          "queryType": "range",
-          "refId": "A"
-        }
-      ],
-      "title": "Batcher Logs",
-      "type": "logs"
-    },
-    {
       "collapsed": false,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 75
+        "y": 76
       },
       "id": 6,
       "panels": [],
@@ -1407,7 +1420,7 @@
         "h": 4,
         "w": 5,
         "x": 0,
-        "y": 76
+        "y": 77
       },
       "id": 7,
       "options": {
@@ -1483,7 +1496,7 @@
         "h": 4,
         "w": 5,
         "x": 5,
-        "y": 76
+        "y": 77
       },
       "id": 10,
       "options": {
@@ -1559,7 +1572,7 @@
         "h": 4,
         "w": 5,
         "x": 10,
-        "y": 76
+        "y": 77
       },
       "id": 9,
       "options": {
@@ -1680,7 +1693,7 @@
         "h": 8,
         "w": 9,
         "x": 15,
-        "y": 76
+        "y": 77
       },
       "id": 13,
       "options": {
@@ -1732,8 +1745,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red",
-                "value": null
+                "color": "red"
               },
               {
                 "color": "green",
@@ -1748,7 +1760,7 @@
         "h": 4,
         "w": 5,
         "x": 0,
-        "y": 80
+        "y": 81
       },
       "id": 8,
       "options": {
@@ -1808,8 +1820,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red",
-                "value": null
+                "color": "red"
               },
               {
                 "color": "green",
@@ -1824,7 +1835,7 @@
         "h": 4,
         "w": 5,
         "x": 5,
-        "y": 80
+        "y": 81
       },
       "id": 11,
       "options": {
@@ -1884,8 +1895,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red",
-                "value": null
+                "color": "red"
               },
               {
                 "color": "green",
@@ -1900,7 +1910,7 @@
         "h": 4,
         "w": 5,
         "x": 10,
-        "y": 80
+        "y": 81
       },
       "id": 12,
       "options": {
@@ -1951,7 +1961,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 84
+        "y": 85
       },
       "id": 5,
       "panels": [],
@@ -1974,8 +1984,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red",
-                "value": null
+                "color": "red"
               },
               {
                 "color": "yellow",
@@ -1994,7 +2003,7 @@
         "h": 4,
         "w": 6,
         "x": 0,
-        "y": 85
+        "y": 86
       },
       "id": 3,
       "options": {
@@ -2086,8 +2095,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2115,7 +2123,7 @@
         "h": 8,
         "w": 9,
         "x": 6,
-        "y": 85
+        "y": 86
       },
       "id": 1,
       "options": {
@@ -2200,8 +2208,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -2229,7 +2236,7 @@
         "h": 8,
         "w": 9,
         "x": 15,
-        "y": 85
+        "y": 86
       },
       "id": 2,
       "options": {
@@ -2281,8 +2288,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "red",
-                "value": null
+                "color": "red"
               },
               {
                 "color": "yellow",
@@ -2301,7 +2307,7 @@
         "h": 4,
         "w": 6,
         "x": 0,
-        "y": 89
+        "y": 90
       },
       "id": 4,
       "options": {
@@ -2347,7 +2353,6 @@
       "type": "stat"
     }
   ],
-  "refresh": "10s",
   "schemaVersion": 39,
   "tags": [],
   "templating": {
