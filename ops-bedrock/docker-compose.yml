@@ -251,6 +251,8 @@ services:
       - MEMSTORE_EXPIRATION=45m
       - EIGENDA_PROXY_SIGNER_PRIVATE_KEY_HEX=0000000000000000000100000000000000000000000000000000000000000000
       - EIGENDA_PROXY_EIGENDA_DISPERSER_RPC=disperser-holesky.eigenda.xyz:443
+      - EIGENDA_PROXY_METRICS_ENABLED=true
+      - EIGENDA_PROXY_METRICS_PORT=7300
     ports:
       - 3100:3100
       - 6969:7300
@@ -277,6 +279,7 @@ services:
       # - prometheus_data:/prometheus
     ports:
       - 9090:9090
+    command: --config.file=/etc/prometheus/prometheus.yml --log.level=debug
 
   loki:
     image: grafana/loki:3.1.1
