@@ -554,6 +554,34 @@ func (l *BatchSubmitter) sendTransaction(ctx context.Context, txdata txData, que
 	var err error
 	// Do the gas estimation offline. A value of 0 will cause the [txmgr] to estimate the gas limit.
 
+	// if plasma DA is enabled we post the txdata to the DA Provider and replace it with the commitment.
+	if !txdata.asBlob && l.Config.UsePlasma {
+		// sanity check
+		if nf := len(txdata.frames); nf != 1 {
+			l.Log.Crit("Unexpected number of frames in calldata tx", "num_frames", nf)
+		}
+		// when posting txdata to an external DA Provider, we use a goroutine to avoid blocking the main loop
+		// since it may take a while to post the txdata to the DA Provider.
+		go func() {
+			l.Metr.RecordDAServerPutRequestSubmitted()
+			comm, err := l.PlasmaDA.SetInput(ctx, txdata.CallData())
+			// TODO: add a status label to the metrics
+			l.Metr.RecordDAServerPutResponseReceived()
+			if err != nil {
+				l.Log.Error("Failed to post input to Plasma DA", "error", err)
+				// requeue frame if we fail to post to the DA Provider so it can be retried
+				l.recordFailedTx(txdata.ID(), err)
+				return
+			}
+			l.Log.Info("Set plasma input", "commitment", comm, "tx", txdata.ID())
+			// signal plasma commitment tx with TxDataVersion1
+			candidate := l.calldataTxCandidate(comm.TxData())
+			l.queueTx(txdata, false, candidate, queue, receiptsCh)
+		}()
+		// we return nil to allow publishStateToL1 to keep processing the next txdata
+		return nil
+	}
+
 	var candidate *txmgr.TxCandidate
 	if txdata.asBlob {
 		if candidate, err = l.blobTxCandidate(txdata); err != nil {
@@ -568,21 +596,7 @@ func (l *BatchSubmitter) sendTransaction(ctx context.Context, txdata txData, que
 		if nf := len(txdata.frames); nf != 1 {
 			l.Log.Crit("Unexpected number of frames in calldata tx", "num_frames", nf)
 		}
-		data := txdata.CallData()
-		// if plasma DA is enabled we post the txdata to the DA Provider and replace it with the commitment.
-		if l.Config.UsePlasma {
-			comm, err := l.PlasmaDA.SetInput(ctx, data)
-			if err != nil {
-				l.Log.Error("Failed to post input to Plasma DA", "error", err)
-				// requeue frame if we fail to post to the DA Provider so it can be retried
-				l.recordFailedTx(txdata.ID(), err)
-				return nil
-			}
-			l.Log.Info("Set plasma input", "commitment", comm, "tx", txdata.ID())
-			// signal plasma commitment tx with TxDataVersion1
-			data = comm.TxData()
-		}
-		candidate = l.calldataTxCandidate(data)
+		candidate = l.calldataTxCandidate(txdata.CallData())
 	}
 
 	l.queueTx(txdata, false, candidate, queue, receiptsCh)
