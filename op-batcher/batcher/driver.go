@@ -535,8 +535,12 @@ func (l *BatchSubmitter) prepareTxData(ctx context.Context) (txData, error) {
 		return txData{}, err
 	}
 
-	if err = l.publishToAltDAUpdateTxData(ctx, txdata); err != nil {
-		return txData{}, fmt.Errorf("BatchSubmitter.prepareAndQueueTxData failed: %w", err)
+	// if AltDA is enabled we post the txdata to the DA Provider and replace it with the commitment.
+	if l.Config.UseAltDA {
+		// TODO: run this in a goroutine to avoid blocking the main loop
+		if err = l.publishToAltDAUpdateTxData(ctx, txdata); err != nil {
+			return txData{}, fmt.Errorf("BatchSubmitter.prepareAndQueueTxData failed: %w", err)
+		}
 	}
 
 	return txdata, nil
@@ -584,24 +588,21 @@ func (l *BatchSubmitter) cancelBlockingTx(queue *txmgr.Queue[txRef], receiptsCh 
 // publishToAltDAUpdateTxData creates & queues for sending a transaction to the batch inbox address with the given `txData`.
 // The method will block if the queue's MaxPendingTransactions is exceeded.
 func (l *BatchSubmitter) publishToAltDAUpdateTxData(ctx context.Context, txdata txData) error {
-	// if AltDA is enabled we post the txdata to the DA Provider and replace it with the commitment.
-	if l.Config.UseAltDA {
-		// sanity check
-		if nf := len(txdata.frames); nf != 1 {
-			l.Log.Crit("Unexpected number of frames in calldata tx", "num_frames", nf)
-		}
-		comm, err := l.AltDA.SetInput(ctx, txdata.CallData())
-		if err != nil {
-			l.Log.Error("Failed to post input to Alt DA", "error", err)
-			// requeue frame if we fail to post to the DA Provider so it can be retried
-			l.recordFailedTx(txdata.ID(), err)
-			return err
-		}
-		l.Log.Info("Set AltDA input", "commitment", comm, "tx", txdata.ID())
-		// TODO: this is kind of weird... we're overwriting the frame's data with the commitment
-		// but keeping the same ID just so we can delete/requeue the frames on success/failure
-		txdata.frames[0].data = comm.TxData()
+	// sanity check
+	if nf := len(txdata.frames); nf != 1 {
+		l.Log.Crit("Unexpected number of frames in calldata tx", "num_frames", nf)
 	}
+	comm, err := l.AltDA.SetInput(ctx, txdata.CallData())
+	if err != nil {
+		l.Log.Error("Failed to post input to Alt DA", "error", err)
+		// requeue frame if we fail to post to the DA Provider so it can be retried
+		l.recordFailedTx(txdata.ID(), err)
+		return err
+	}
+	l.Log.Info("Set AltDA input", "commitment", comm, "tx", txdata.ID())
+	// TODO: this is kind of weird... we're overwriting the frame's data with the commitment
+	// but keeping the same ID just so we can delete/requeue the frames on success/failure
+	txdata.frames[0].data = comm.TxData()
 
 	return nil
 }
