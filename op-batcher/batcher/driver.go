@@ -62,6 +62,7 @@ type DriverSetup struct {
 	RollupConfig     *rollup.Config
 	Config           BatcherConfig
 	Txmgr            *txmgr.SimpleTxManager
+	Publisher        *FramePublisher
 	L1Client         L1Client
 	EndpointProvider dial.L2EndpointProvider
 	ChannelConfig    ChannelConfigProvider
@@ -112,6 +113,9 @@ func (l *BatchSubmitter) StartBatchSubmitting() error {
 	l.shutdownCtx, l.cancelShutdownCtx = context.WithCancel(context.Background())
 	l.killCtx, l.cancelKillCtx = context.WithCancel(context.Background())
 	l.clearState(l.shutdownCtx)
+	// use same max number of goroutines for altda and eth txs for now.
+	// might want to use separate limits in the future, but can't think of a reason right now.
+	l.Publisher.Init(l.killCtx, l.Txmgr, l.state, l.Config.MaxPendingTransactions, l.Config.MaxPendingTransactions)
 	l.lastStoredBlock = eth.BlockID{}
 
 	if l.Config.WaitNodeSync {
@@ -299,7 +303,6 @@ func (l *BatchSubmitter) loop() {
 
 	receiptsCh := make(chan txmgr.TxReceipt[txRef])
 	queue := txmgr.NewQueue[txRef](l.killCtx, l.Txmgr, l.Config.MaxPendingTransactions)
-	var daWaitGroup sync.WaitGroup
 
 	// start the receipt/result processing loop
 	receiptLoopDone := make(chan struct{})
@@ -335,12 +338,9 @@ func (l *BatchSubmitter) loop() {
 	defer ticker.Stop()
 
 	publishAndWait := func() {
-		l.publishStateToL1(queue, receiptsCh, &daWaitGroup)
+		l.publishStateToL1()
 		if !l.Txmgr.IsClosed() {
-			l.Log.Info("Wait for pure DA writes, not L1 txs")
-			daWaitGroup.Wait()
-			l.Log.Info("Wait for L1 writes (blobs or DA commitments)")
-			queue.Wait()
+			l.Publisher.Wait()
 		} else {
 			l.Log.Info("Txmgr is closed, remaining channel data won't be sent")
 		}
@@ -373,7 +373,7 @@ func (l *BatchSubmitter) loop() {
 				l.clearState(l.shutdownCtx)
 				continue
 			}
-			l.publishStateToL1(queue, receiptsCh, &daWaitGroup)
+			l.publishStateToL1()
 		case <-l.shutdownCtx.Done():
 			if l.Txmgr.IsClosed() {
 				l.Log.Info("Txmgr is closed, remaining channel data won't be sent")
@@ -430,14 +430,14 @@ func (l *BatchSubmitter) waitNodeSync() error {
 
 // publishStateToL1 queues up all pending TxData to be published to the L1, returning when there is
 // no more data to queue for publishing or if there was an error queing the data.
-func (l *BatchSubmitter) publishStateToL1(queue *txmgr.Queue[txRef], receiptsCh chan txmgr.TxReceipt[txRef], daWaitGroup *sync.WaitGroup) {
+func (l *BatchSubmitter) publishStateToL1() {
 	for {
 		// if the txmgr is closed, we stop the transaction sending
 		if l.Txmgr.IsClosed() {
 			l.Log.Info("Txmgr is closed, aborting state publishing")
 			return
 		}
-		err := l.publishTxToL1(l.killCtx, queue, receiptsCh, daWaitGroup)
+		err := l.publishTxToL1(l.killCtx)
 		if err != nil {
 			if err != io.EOF {
 				l.Log.Error("Error publishing tx to l1", "err", err)
@@ -487,7 +487,7 @@ func (l *BatchSubmitter) clearState(ctx context.Context) {
 }
 
 // publishTxToL1 submits a single state tx to the L1
-func (l *BatchSubmitter) publishTxToL1(ctx context.Context, queue *txmgr.Queue[txRef], receiptsCh chan txmgr.TxReceipt[txRef], daWaitGroup *sync.WaitGroup) error {
+func (l *BatchSubmitter) publishTxToL1(ctx context.Context) error {
 	// send all available transactions
 	l1tip, err := l.l1Tip(ctx)
 	if err != nil {
@@ -507,7 +507,7 @@ func (l *BatchSubmitter) publishTxToL1(ctx context.Context, queue *txmgr.Queue[t
 		return err
 	}
 
-	if err = l.sendTransaction(ctx, txdata, queue, receiptsCh, daWaitGroup); err != nil {
+	if err = l.Publisher.Publish(ctx, txdata); err != nil {
 		return fmt.Errorf("BatchSubmitter.sendTransaction failed: %w", err)
 	}
 	return nil
@@ -550,59 +550,6 @@ func (l *BatchSubmitter) cancelBlockingTx(queue *txmgr.Queue[txRef], receiptsCh 
 	}
 	l.Log.Warn("sending a cancellation transaction to unblock txpool", "blocked_blob", isBlockedBlob)
 	l.queueTx(txData{}, true, candidate, queue, receiptsCh)
-}
-
-// sendTransaction creates & queues for sending a transaction to the batch inbox address with the given `txData`.
-// The method will block if the queue's MaxPendingTransactions is exceeded.
-func (l *BatchSubmitter) sendTransaction(ctx context.Context, txdata txData, queue *txmgr.Queue[txRef], receiptsCh chan txmgr.TxReceipt[txRef], daWaitGroup *sync.WaitGroup) error {
-	var err error
-
-	// if Alt DA is enabled we post the txdata to the DA Provider and replace it with the commitment.
-	if !txdata.asBlob && l.Config.UseAltDA {
-		// sanity check
-		if nf := len(txdata.frames); nf != 1 {
-			l.Log.Crit("Unexpected number of frames in calldata tx", "num_frames", nf)
-		}
-		// when posting txdata to an external DA Provider, we use a goroutine to avoid blocking the main loop
-		// since it may take a while to post the txdata to the DA Provider.
-		daWaitGroup.Add(1)
-		go func() {
-			defer daWaitGroup.Done()
-			comm, err := l.AltDA.SetInput(ctx, txdata.CallData())
-			if err != nil {
-				l.Log.Error("Failed to post input to Alt DA", "error", err)
-				// requeue frame if we fail to post to the DA Provider so it can be retried
-				l.recordFailedTx(txdata.ID(), err)
-				return
-			}
-			l.Log.Info("Set altda input", "commitment", comm, "tx", txdata.ID())
-			// signal altda commitment tx with TxDataVersion1
-			candidate := l.calldataTxCandidate(comm.TxData())
-			l.queueTx(txdata, false, candidate, queue, receiptsCh)
-		}()
-		// we return nil to allow publishStateToL1 to keep processing the next txdata
-		return nil
-	}
-
-	var candidate *txmgr.TxCandidate
-	if txdata.asBlob {
-		if candidate, err = l.blobTxCandidate(txdata); err != nil {
-			// We could potentially fall through and try a calldata tx instead, but this would
-			// likely result in the chain spending more in gas fees than it is tuned for, so best
-			// to just fail. We do not expect this error to trigger unless there is a serious bug
-			// or configuration issue.
-			return fmt.Errorf("could not create blob tx candidate: %w", err)
-		}
-	} else {
-		// sanity check
-		if nf := len(txdata.frames); nf != 1 {
-			l.Log.Crit("Unexpected number of frames in calldata tx", "num_frames", nf)
-		}
-		candidate = l.calldataTxCandidate(txdata.CallData())
-	}
-
-	l.queueTx(txdata, false, candidate, queue, receiptsCh)
-	return nil
 }
 
 func (l *BatchSubmitter) queueTx(txdata txData, isCancel bool, candidate *txmgr.TxCandidate, queue *txmgr.Queue[txRef], receiptsCh chan txmgr.TxReceipt[txRef]) {

@@ -52,6 +52,7 @@ type BatcherService struct {
 	L1Client         *ethclient.Client
 	EndpointProvider dial.L2EndpointProvider
 	TxManager        *txmgr.SimpleTxManager
+	FramePublisher   *FramePublisher
 	AltDA            *altda.DAClient
 
 	BatcherConfig
@@ -115,10 +116,11 @@ func (bs *BatcherService) initFromCLIConfig(ctx context.Context, version string,
 	if err := bs.initPProf(cfg); err != nil {
 		return fmt.Errorf("failed to init profiling: %w", err)
 	}
-	// init before driver
+	// init before driver and framePublisher
 	if err := bs.initAltDA(cfg); err != nil {
 		return fmt.Errorf("failed to init AltDA: %w", err)
 	}
+	bs.initFramePublisher(cfg)
 	bs.initDriver()
 	if err := bs.initRPCServer(cfg); err != nil {
 		return fmt.Errorf("failed to start RPC server: %w", err)
@@ -276,6 +278,11 @@ func (bs *BatcherService) initTxManager(cfg *CLIConfig) error {
 	return nil
 }
 
+func (bs *BatcherService) initFramePublisher(cfg *CLIConfig) {
+	fp := NewFramePublisher(bs.Log, bs.RollupConfig, bs.AltDA)
+	bs.FramePublisher = fp
+}
+
 func (bs *BatcherService) initPProf(cfg *CLIConfig) error {
 	bs.pprofService = oppprof.New(
 		cfg.PprofConfig.ListenEnabled,
@@ -319,6 +326,7 @@ func (bs *BatcherService) initDriver() {
 		RollupConfig:     bs.RollupConfig,
 		Config:           bs.BatcherConfig,
 		Txmgr:            bs.TxManager,
+		Publisher:        bs.FramePublisher,
 		L1Client:         bs.L1Client,
 		EndpointProvider: bs.EndpointProvider,
 		ChannelConfig:    bs.ChannelConfig,
