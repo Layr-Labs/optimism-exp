@@ -300,35 +300,11 @@ func (l *BatchSubmitter) loop() {
 	receiptsCh := make(chan txmgr.TxReceipt[txRef])
 	queue := txmgr.NewQueue[txRef](l.killCtx, l.Txmgr, l.Config.MaxPendingTransactions)
 
-	// start the receipt/result processing loop
-	receiptLoopDone := make(chan struct{})
-	defer close(receiptLoopDone) // shut down receipt loop
-
 	var (
 		txpoolState       atomic.Int32
 		txpoolBlockedBlob bool
 	)
 	txpoolState.Store(TxpoolGood)
-	go func() {
-		for {
-			select {
-			case r := <-receiptsCh:
-				if errors.Is(r.Err, txpool.ErrAlreadyReserved) && txpoolState.CompareAndSwap(TxpoolGood, TxpoolBlocked) {
-					txpoolBlockedBlob = r.ID.isBlob
-					l.Log.Info("incompatible tx in txpool")
-				} else if r.ID.isCancel && txpoolState.CompareAndSwap(TxpoolCancelPending, TxpoolGood) {
-					// Set state to TxpoolGood even if the cancellation transaction ended in error
-					// since the stuck transaction could have cleared while we were waiting.
-					l.Log.Info("txpool may no longer be blocked", "err", r.Err)
-				}
-				l.Log.Info("Handling receipt", "id", r.ID)
-				l.handleReceipt(r)
-			case <-receiptLoopDone:
-				l.Log.Info("Receipt processing loop done")
-				return
-			}
-		}
-	}()
 
 	ticker := time.NewTicker(l.Config.PollInterval)
 	defer ticker.Stop()
@@ -370,6 +346,17 @@ func (l *BatchSubmitter) loop() {
 				continue
 			}
 			l.publishStateToL1(queue, receiptsCh)
+		case r := <-receiptsCh:
+			if errors.Is(r.Err, txpool.ErrAlreadyReserved) && txpoolState.CompareAndSwap(TxpoolGood, TxpoolBlocked) {
+				txpoolBlockedBlob = r.ID.isBlob
+				l.Log.Info("incompatible tx in txpool")
+			} else if r.ID.isCancel && txpoolState.CompareAndSwap(TxpoolCancelPending, TxpoolGood) {
+				// Set state to TxpoolGood even if the cancellation transaction ended in error
+				// since the stuck transaction could have cleared while we were waiting.
+				l.Log.Info("txpool may no longer be blocked", "err", r.Err)
+			}
+			l.Log.Info("Handling receipt", "id", r.ID)
+			l.handleReceipt(r)
 		case <-l.shutdownCtx.Done():
 			if l.Txmgr.IsClosed() {
 				l.Log.Info("Txmgr is closed, remaining channel data won't be sent")
