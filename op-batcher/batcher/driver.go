@@ -227,7 +227,7 @@ func (l *BatchSubmitter) loadBlockIntoState(ctx context.Context, blockNumber uin
 		return nil, fmt.Errorf("adding L2 block to state: %w", err)
 	}
 
-	l.Log.Info("Added L2 block to local state", "block", eth.ToBlockID(block), "tx_count", len(block.Transactions()), "time", block.Time())
+	l.Log.Info("Added L2 block to local state", "block", eth.ToBlockID(block), "tx_count", len(block.Transactions()), "time", block.Time(), "pending_blocks", l.state.PendingBlocks())
 	return block, nil
 }
 
@@ -306,9 +306,6 @@ func (l *BatchSubmitter) loop() {
 	)
 	txpoolState.Store(TxpoolGood)
 
-	ticker := time.NewTicker(l.Config.PollInterval)
-	defer ticker.Stop()
-
 	publishAndWait := func() {
 		l.publishStateToL1(queue, receiptsCh)
 		if !l.Txmgr.IsClosed() {
@@ -318,16 +315,50 @@ func (l *BatchSubmitter) loop() {
 		}
 	}
 
-	for {
-		select {
-		case <-ticker.C:
-			if txpoolState.CompareAndSwap(TxpoolBlocked, TxpoolCancelPending) {
-				// txpoolState is set to Blocked only if Send() is returning
-				// ErrAlreadyReserved. In this case, the TxMgr nonce should be reset to nil,
-				// allowing us to send a cancellation transaction.
-				l.cancelBlockingTx(queue, receiptsCh, txpoolBlockedBlob)
+	txpoolStateTick := time.NewTicker(l.Config.PollInterval)
+	loadBlocksTick := time.NewTicker(l.Config.PollInterval)
+
+	var pendingTxData *txData
+	txDataCh := make(chan *txData)
+
+	// tx publishing goroutine
+	go func() {
+		for txdata := range txDataCh {
+			if txdata == nil {
+				l.Log.Error("nil txdata received... shouldn't happen")
+				continue
 			}
-			if txpoolState.Load() != TxpoolGood {
+			if err := l.sendTransaction(l.killCtx, *txdata, queue, receiptsCh); err != nil {
+				l.Log.Error("Error sending transaction", "err", err)
+			}
+		}
+	}()
+
+	for {
+		l.Log.Trace("BatchSubmitter loop iteration")
+
+		// maybeNilTxDataCh is nil when pendingTxData is nil,
+		// such that we don't send a txData to the channel when there is no data to send.
+		var maybeNilTxDataCh chan *txData
+		if pendingTxData != nil {
+			maybeNilTxDataCh = txDataCh
+		} else if !l.Txmgr.IsClosed() && l.state.HasTxData() {
+			if l1tip, err := l.l1Tip(l.killCtx); err == nil {
+				if pendingTxDataPtr, err := l.state.TxData(l1tip.ID()); err == nil {
+					pendingTxData = &pendingTxDataPtr
+					maybeNilTxDataCh = txDataCh
+				}
+			}
+		}
+
+		var processBlocks <-chan time.Time
+		if l.state.IsFull() {
+			processBlocks = time.After(0)
+		}
+
+		select {
+		case <-loadBlocksTick.C:
+			if l.state.IsFull() {
 				continue
 			}
 			if err := l.loadBlocksIntoState(l.shutdownCtx); errors.Is(err, ErrReorg) {
@@ -345,7 +376,20 @@ func (l *BatchSubmitter) loop() {
 				l.clearState(l.shutdownCtx)
 				continue
 			}
-			l.publishStateToL1(queue, receiptsCh)
+		case <-processBlocks:
+			l.Log.Debug("Processing blocks")
+			l1tip, err := l.l1Tip(l.killCtx)
+			if err != nil {
+				l.Log.Error("Failed to query L1 tip", "err", err)
+				continue
+			}
+			err = l.state.ProcessBlocks(l1tip.ID())
+			if err != nil && !errors.Is(err, io.EOF) {
+				l.Log.Error("Error processing blocks", "err", err)
+			}
+		case maybeNilTxDataCh <- pendingTxData:
+			// sent pendingTxData to the tx publishing goroutine
+			pendingTxData = nil
 		case r := <-receiptsCh:
 			if errors.Is(r.Err, txpool.ErrAlreadyReserved) && txpoolState.CompareAndSwap(TxpoolGood, TxpoolBlocked) {
 				txpoolBlockedBlob = r.ID.isBlob
@@ -357,6 +401,18 @@ func (l *BatchSubmitter) loop() {
 			}
 			l.Log.Info("Handling receipt", "id", r.ID)
 			l.handleReceipt(r)
+		case <-txpoolStateTick.C:
+			l.Log.Trace("Checking txpool state")
+			if txpoolState.CompareAndSwap(TxpoolBlocked, TxpoolCancelPending) {
+				// txpoolState is set to Blocked only if Send() is returning
+				// ErrAlreadyReserved. In this case, the TxMgr nonce should be reset to nil,
+				// allowing us to send a cancellation transaction.
+				// TODO(samlaf): unblock this
+				l.cancelBlockingTx(queue, receiptsCh, txpoolBlockedBlob)
+			}
+			if txpoolState.Load() != TxpoolGood {
+				continue
+			}
 		case <-l.shutdownCtx.Done():
 			if l.Txmgr.IsClosed() {
 				l.Log.Info("Txmgr is closed, remaining channel data won't be sent")
@@ -471,7 +527,6 @@ func (l *BatchSubmitter) clearState(ctx context.Context) {
 
 // publishTxToL1 submits a single state tx to the L1
 func (l *BatchSubmitter) publishTxToL1(ctx context.Context, queue *txmgr.Queue[txRef], receiptsCh chan txmgr.TxReceipt[txRef]) error {
-	// send all available transactions
 	l1tip, err := l.l1Tip(ctx)
 	if err != nil {
 		l.Log.Error("Failed to query L1 tip", "err", err)

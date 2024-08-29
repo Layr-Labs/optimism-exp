@@ -59,6 +59,37 @@ func NewChannelManager(log log.Logger, metr metrics.Metricer, cfgProvider Channe
 	}
 }
 
+// IsFull returns true if the channel manager has more than 10 pending blocks to be inserted
+// into channels. The driving loop can use this signal to throttle block loading from the sequencer.
+func (s *channelManager) IsFull() bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return len(s.blocks) > 10
+}
+
+func (s *channelManager) PendingBlocks() int {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return len(s.blocks)
+}
+
+// AddL2Block adds an L2 block to the internal blocks queue. It returns ErrReorg
+// if the block does not extend the last block loaded into the state. If no
+// blocks were added yet, the parent hash check is skipped.
+func (s *channelManager) AddL2Block(block *types.Block) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.tip != (common.Hash{}) && s.tip != block.ParentHash() {
+		return ErrReorg
+	}
+
+	s.metr.RecordL2BlockInPendingQueue(block)
+	s.blocks = append(s.blocks, block)
+	s.tip = block.Hash()
+
+	return nil
+}
+
 // Clear clears the entire state of the channel manager.
 // It is intended to be used before launching op-batcher and after an L2 reorg.
 func (s *channelManager) Clear(l1OriginLastClosedChannel eth.BlockID) {
@@ -144,6 +175,42 @@ func (s *channelManager) nextTxData(channel *channel) (txData, error) {
 	return tx, nil
 }
 
+func (s *channelManager) HasTxData() bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	for _, ch := range s.channelQueue {
+		if ch.HasTxData() {
+			return true
+		}
+	}
+	return false
+}
+
+func (s *channelManager) ProcessBlocks(l1Head eth.BlockID) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	// If we have no saved blocks, we will not be able to create valid frames
+	if len(s.blocks) == 0 {
+		return io.EOF
+	}
+
+	if err := s.ensureChannelWithSpace(eth.BlockID{}); err != nil {
+		return err
+	}
+
+	if err := s.processBlocks(); err != nil {
+		return err
+	}
+
+	// Register current L1 head only after all pending blocks have been
+	// processed. Even if a timeout will be triggered now, it is better to have
+	// all pending blocks be included in this channel for submission.
+	s.registerL1Block(l1Head)
+
+	return s.outputFrames()
+}
+
 // TxData returns the next tx data that should be submitted to L1.
 //
 // If the pending channel is
@@ -152,6 +219,7 @@ func (s *channelManager) nextTxData(channel *channel) (txData, error) {
 func (s *channelManager) TxData(l1Head eth.BlockID) (txData, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+
 	var firstWithTxData *channel
 	for _, ch := range s.channelQueue {
 		if ch.HasTxData() {
@@ -160,7 +228,7 @@ func (s *channelManager) TxData(l1Head eth.BlockID) (txData, error) {
 		}
 	}
 
-	dataPending := firstWithTxData != nil && firstWithTxData.HasTxData()
+	dataPending := firstWithTxData != nil
 	s.log.Debug("Requested tx data", "l1Head", l1Head, "txdata_pending", dataPending, "blocks_pending", len(s.blocks))
 
 	// Short circuit if there is pending tx data or the channel manager is closed.
@@ -173,26 +241,12 @@ func (s *channelManager) TxData(l1Head eth.BlockID) (txData, error) {
 	// If we have no saved blocks, we will not be able to create valid frames
 	if len(s.blocks) == 0 {
 		return txData{}, io.EOF
+	} else {
+		// only adding this to help debug in case we forget cases while refactoring
+		// TODO(samlaf): change this to something appropriate after finishing the event loop refactor
+		s.log.Error("No pending tx data, but blocks are available. This should never happen. Did you forget to call processBlocks()?", "blocks_pending", len(s.blocks))
+		return txData{}, fmt.Errorf("fatal error")
 	}
-
-	if err := s.ensureChannelWithSpace(l1Head); err != nil {
-		return txData{}, err
-	}
-
-	if err := s.processBlocks(); err != nil {
-		return txData{}, err
-	}
-
-	// Register current L1 head only after all pending blocks have been
-	// processed. Even if a timeout will be triggered now, it is better to have
-	// all pending blocks be included in this channel for submission.
-	s.registerL1Block(l1Head)
-
-	if err := s.outputFrames(); err != nil {
-		return txData{}, err
-	}
-
-	return s.nextTxData(s.currentChannel)
 }
 
 // ensureChannelWithSpace ensures currentChannel is populated with a channel that has
@@ -330,23 +384,6 @@ func (s *channelManager) outputFrames() error {
 		"compr_ratio", comprRatio,
 		"latest_l1_origin", s.l1OriginLastClosedChannel,
 	)
-	return nil
-}
-
-// AddL2Block adds an L2 block to the internal blocks queue. It returns ErrReorg
-// if the block does not extend the last block loaded into the state. If no
-// blocks were added yet, the parent hash check is skipped.
-func (s *channelManager) AddL2Block(block *types.Block) error {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	if s.tip != (common.Hash{}) && s.tip != block.ParentHash() {
-		return ErrReorg
-	}
-
-	s.metr.RecordL2BlockInPendingQueue(block)
-	s.blocks = append(s.blocks, block)
-	s.tip = block.Hash()
-
 	return nil
 }
 
