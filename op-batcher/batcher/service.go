@@ -99,6 +99,9 @@ func (bs *BatcherService) initFromCLIConfig(ctx context.Context, version string,
 	bs.NetworkTimeout = cfg.TxMgrConfig.NetworkTimeout
 	bs.CheckRecentTxsDepth = cfg.CheckRecentTxsDepth
 	bs.WaitNodeSync = cfg.WaitNodeSync
+	bs.Log.Info("Batcher config", "poll_interval", bs.PollInterval, "max_pending_transactions", bs.MaxPendingTransactions, "max_concurrent_da_requests", bs.MaxConcurrentDARequests,
+		"network_timeout", bs.NetworkTimeout, "check_recent_txs_depth", bs.CheckRecentTxsDepth, "wait_node_sync", bs.WaitNodeSync,
+	)
 	if err := bs.initRPCClients(ctx, cfg); err != nil {
 		return err
 	}
