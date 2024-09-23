@@ -39,9 +39,14 @@ func (*noopMetrics) RecordChannelClosed(derive.ChannelID, int, int, int, int, er
 func (*noopMetrics) RecordChannelFullySubmitted(derive.ChannelID) {}
 func (*noopMetrics) RecordChannelTimedOut(derive.ChannelID)       {}
 
+func (*noopMetrics) RecordAltDARequestSubmitted() {}
+func (*noopMetrics) RecordAltDARequestSuccess()   {}
+func (*noopMetrics) RecordAltDARequestFailed()    {}
+
 func (*noopMetrics) RecordBatchTxSubmitted() {}
 func (*noopMetrics) RecordBatchTxSuccess()   {}
 func (*noopMetrics) RecordBatchTxFailed()    {}
+
 func (*noopMetrics) RecordBlobUsedBytes(int) {}
 func (*noopMetrics) StartBalanceMetrics(log.Logger, *ethclient.Client, common.Address) io.Closer {
 	return nil

@@ -603,18 +603,20 @@ func (l *BatchSubmitter) publishToAltDAAndL1(txdata txData, queue *txmgr.Queue[t
 	// when posting txdata to an external DA Provider, we use a goroutine to avoid blocking the main loop
 	// since it may take a while for the request to return.
 	goroutineSpawned := daGroup.TryGo(func() error {
+		l.Metr.RecordAltDARequestSubmitted()
+		l.Log.Info("Posting txdata to Alt DA")
 		// TODO: probably shouldn't be using the global shutdownCtx here, see https://go.dev/blog/context-and-structs
 		// but sendTransaction receives l.killCtx as an argument, which currently is only canceled after waiting for the main loop
 		// to exit, which would wait on this DA call to finish, which would take a long time.
 		// So we prefer to mimic the behavior of txmgr and cancel all pending DA/txmgr requests when the batcher is stopped.
 		comm, err := l.AltDA.SetInput(l.shutdownCtx, txdata.CallData())
 		if err != nil {
-			l.Log.Error("Failed to post input to Alt DA", "error", err)
 			// requeue frame if we fail to post to the DA Provider so it can be retried
 			// note: this assumes that the da server caches requests, otherwise it might lead to resubmissions of the blobs
 			l.recordFailedDARequest(txdata.ID(), err)
 			return nil
 		}
+		l.Metr.RecordAltDARequestSuccess()
 		l.Log.Info("Set altda input", "commitment", comm, "tx", txdata.ID())
 		candidate := l.calldataTxCandidate(comm.TxData())
 		l.sendTx(txdata, false, candidate, queue, receiptsCh)
@@ -624,7 +626,8 @@ func (l *BatchSubmitter) publishToAltDAAndL1(txdata txData, queue *txmgr.Queue[t
 		// We couldn't start the goroutine because the errgroup.Group limit
 		// is already reached. Since we can't send the txdata, we have to
 		// return it for later processing. We use nil error to skip error logging.
-		l.recordFailedDARequest(txdata.ID(), nil)
+		// TODO: TxFailed pushes the databack but also increases tx_failed metric count, which we don't want.
+		l.state.TxFailed(txdata.ID())
 	}
 }
 
@@ -718,9 +721,8 @@ func (l *BatchSubmitter) recordL1Tip(l1tip eth.L1BlockRef) {
 }
 
 func (l *BatchSubmitter) recordFailedDARequest(id txID, err error) {
-	if err != nil {
-		l.Log.Warn("DA request failed", logFields(id, err)...)
-	}
+	l.Metr.RecordAltDARequestFailed()
+	l.Log.Warn("DA request failed", logFields(id, err)...)
 	l.state.TxFailed(id)
 }
 

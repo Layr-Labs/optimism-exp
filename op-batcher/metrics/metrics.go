@@ -42,6 +42,10 @@ type Metricer interface {
 	RecordChannelFullySubmitted(id derive.ChannelID)
 	RecordChannelTimedOut(id derive.ChannelID)
 
+	RecordAltDARequestSubmitted()
+	RecordAltDARequestSuccess()
+	RecordAltDARequestFailed()
+
 	RecordBatchTxSubmitted()
 	RecordBatchTxSuccess()
 	RecordBatchTxFailed()
@@ -83,6 +87,9 @@ type Metrics struct {
 	batcherTxEvs opmetrics.EventVec
 
 	blobUsedBytes prometheus.Histogram
+
+	altdaInFlightRequests prometheus.Gauge
+	altdaRequestEvs       opmetrics.EventVec
 }
 
 var _ Metricer = (*Metrics)(nil)
@@ -193,6 +200,13 @@ func NewMetrics(procName string) *Metrics {
 		}),
 
 		batcherTxEvs: opmetrics.NewEventVec(factory, ns, "", "batcher_tx", "BatcherTx", []string{"stage"}),
+
+		altdaRequestEvs: opmetrics.NewEventVec(factory, ns, "", "altda_request", "AltDARequest", []string{"stage"}),
+		altdaInFlightRequests: factory.NewGauge(prometheus.GaugeOpts{
+			Namespace: ns,
+			Name:      "altda_in_flight_requests",
+			Help:      "Number of in-flight requests to the alt data availability layer.",
+		}),
 	}
 }
 
@@ -227,6 +241,10 @@ const (
 	StageClosed         = "closed"
 	StageFullySubmitted = "fully_submitted"
 	StageTimedOut       = "timed_out"
+
+	AltDAStageSubmitted = "submitted"
+	AltDAStageSuccess   = "success"
+	AltDAStageFailed    = "failed"
 
 	TxStageSubmitted = "submitted"
 	TxStageSuccess   = "success"
@@ -316,6 +334,21 @@ func (m *Metrics) RecordBatchTxFailed() {
 
 func (m *Metrics) RecordBlobUsedBytes(num int) {
 	m.blobUsedBytes.Observe(float64(num))
+}
+
+func (m *Metrics) RecordAltDARequestSubmitted() {
+	m.altdaInFlightRequests.Inc()
+	m.altdaRequestEvs.Record(AltDAStageSubmitted)
+}
+
+func (m *Metrics) RecordAltDARequestSuccess() {
+	m.altdaInFlightRequests.Dec()
+	m.altdaRequestEvs.Record(AltDAStageSuccess)
+}
+
+func (m *Metrics) RecordAltDARequestFailed() {
+	m.altdaInFlightRequests.Dec()
+	m.altdaRequestEvs.Record(AltDAStageFailed)
 }
 
 // estimateBatchSize estimates the size of the batch
