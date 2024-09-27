@@ -34,7 +34,7 @@
       "collapsed": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "DS_PROMETHEUS"
       },
       "gridPos": {
         "h": 1,
@@ -48,7 +48,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "DS_PROMETHEUS"
           },
           "refId": "A"
         }
@@ -59,7 +59,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -121,7 +121,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -140,7 +140,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -221,7 +221,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "chain_head_header{chain=\"$chain\", instance=~\"$instance\"}",
@@ -234,7 +234,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "chain_head_receipt{chain=\"$chain\", instance=~\"$instance\"}",
@@ -247,7 +247,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "chain_head_block{chain=\"$chain\", instance=~\"$instance\"}",
@@ -264,7 +264,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -326,7 +326,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "editorMode": "code",
           "expr": "chain_reorg_add{chain=\"$chain\", instance=~\"$instance\"}",
@@ -342,7 +342,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -404,7 +404,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "txpool_pending{chain=\"$chain\", instance=~\"$instance\"}",
           "format": "time_series",
@@ -418,7 +418,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -499,7 +499,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "txpool_pending{chain=\"$chain\", instance=~\"$instance\"}",
           "format": "time_series",
@@ -510,7 +510,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "txpool_queued{chain=\"$chain\", instance=~\"$instance\"}",
           "format": "time_series",
@@ -521,7 +521,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "txpool_local{chain=\"$chain\", instance=~\"$instance\"}",
           "format": "time_series",
@@ -536,7 +536,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -598,7 +598,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "chain_head_receipt{chain=\"$chain\", instance=~\"$instance\"}",
@@ -615,7 +615,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -677,7 +677,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "txpool_local{chain=\"$chain\", instance=~\"$instance\"}",
           "format": "time_series",
@@ -691,7 +691,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -753,7 +753,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "editorMode": "code",
           "expr": "chain_reorg_drop{chain=\"$chain\", instance=~\"$instance\"}",
@@ -769,7 +769,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -831,7 +831,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "chain_head_block{chain=\"$chain\", instance=~\"$instance\"}",
@@ -848,7 +848,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -910,7 +910,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "txpool_queued{chain=\"$chain\", instance=~\"$instance\"}",
           "format": "time_series",
@@ -924,7 +924,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -1010,7 +1010,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "chain_execution{chain=\"$chain\", instance=~\"$instance\", quantile=\"$quantile\"}",
@@ -1023,7 +1023,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "chain_validation{chain=\"$chain\", instance=~\"$instance\", quantile=\"$quantile\"}",
           "format": "time_series",
@@ -1036,7 +1036,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "chain_write{chain=\"$chain\", instance=~\"$instance\", quantile=\"$quantile\"}",
           "format": "time_series",
@@ -1048,7 +1048,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "chain_account_reads{chain=\"$chain\", instance=~\"$instance\", quantile=\"$quantile\"}",
           "format": "time_series",
@@ -1059,7 +1059,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "chain_account_updates{chain=\"$chain\", instance=~\"$instance\", quantile=\"$quantile\"}",
           "format": "time_series",
@@ -1070,7 +1070,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "chain_account_hashes{chain=\"$chain\", instance=~\"$instance\", quantile=\"$quantile\"}",
           "format": "time_series",
@@ -1081,7 +1081,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "chain_account_commits{chain=\"$chain\", instance=~\"$instance\", quantile=\"$quantile\"}",
           "format": "time_series",
@@ -1092,7 +1092,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "chain_storage_reads{chain=\"$chain\", instance=~\"$instance\", quantile=\"$quantile\"}",
           "format": "time_series",
@@ -1103,7 +1103,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "chain_storage_updates{chain=\"$chain\", instance=~\"$instance\", quantile=\"$quantile\"}",
           "format": "time_series",
@@ -1114,7 +1114,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "chain_storage_hashes{chain=\"$chain\", instance=~\"$instance\", quantile=\"$quantile\"}",
           "format": "time_series",
@@ -1125,7 +1125,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "chain_storage_commits{chain=\"$chain\", instance=~\"$instance\", quantile=\"$quantile\"}",
@@ -1138,7 +1138,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "chain_snapshot_commits{chain=\"$chain\", instance=~\"$instance\", quantile=\"$quantile\"}",
@@ -1154,7 +1154,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -1240,7 +1240,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "rate(txpool_valid{chain=\"$chain\", instance=~\"$instance\"}[1m])",
           "format": "time_series",
@@ -1251,7 +1251,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "rate(txpool_invalid{chain=\"$chain\", instance=~\"$instance\"}[1m])",
           "format": "time_series",
@@ -1262,7 +1262,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "rate(txpool_underpriced{chain=\"$chain\", instance=~\"$instance\"}[1m])",
           "format": "time_series",
@@ -1275,7 +1275,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "rate(txpool_pending_discard{chain=\"$chain\", instance=~\"$instance\"}[1m])",
           "format": "time_series",
@@ -1287,7 +1287,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "rate(txpool_pending_replace{chain=\"$chain\", instance=~\"$instance\"}[1m])",
           "format": "time_series",
@@ -1298,7 +1298,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "rate(txpool_pending_ratelimit{chain=\"$chain\", instance=~\"$instance\"}[1m])",
           "format": "time_series",
@@ -1309,7 +1309,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "rate(txpool_pending_nofunds{chain=\"$chain\", instance=~\"$instance\"}[1m])",
           "format": "time_series",
@@ -1320,7 +1320,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "rate(txpool_queued_discard{chain=\"$chain\", instance=~\"$instance\"}[1m])",
           "format": "time_series",
@@ -1332,7 +1332,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "rate(txpool_queued_replace{chain=\"$chain\", instance=~\"$instance\"}[1m])",
           "format": "time_series",
@@ -1344,7 +1344,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "rate(txpool_queued_ratelimit{chain=\"$chain\", instance=~\"$instance\"}[1m])",
           "format": "time_series",
@@ -1356,7 +1356,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "rate(txpool_queued_nofunds{chain=\"$chain\", instance=~\"$instance\"}[1m])",
           "format": "time_series",
@@ -1368,7 +1368,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "editorMode": "code",
           "expr": "rate(txpool_known{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -1397,7 +1397,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "description": "",
       "fieldConfig": {
@@ -1507,7 +1507,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -1525,7 +1525,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "description": "",
       "fieldConfig": {
@@ -1635,7 +1635,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -1649,7 +1649,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "hide": false,
           "refId": "B"
@@ -1661,7 +1661,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "description": "",
       "fieldConfig": {
@@ -1756,7 +1756,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -1774,7 +1774,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "description": "",
       "fieldConfig": {
@@ -1881,7 +1881,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -1895,7 +1895,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "hide": false,
           "refId": "B"
@@ -1908,7 +1908,7 @@
       "collapsed": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "DS_PROMETHEUS"
       },
       "gridPos": {
         "h": 1,
@@ -1922,7 +1922,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "DS_PROMETHEUS"
           },
           "refId": "A"
         }
@@ -1933,7 +1933,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -2044,7 +2044,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "avg(system_cpu_sysload{chain=\"$chain\", instance=~\"$instance\"}) by (instance)",
@@ -2057,7 +2057,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "avg(system_cpu_syswait{chain=\"$chain\", instance=~\"$instance\"}) by (instance)",
@@ -2070,7 +2070,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "avg(system_cpu_procload{chain=\"$chain\", instance=~\"$instance\"}) by (instance)",
@@ -2083,7 +2083,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "avg(system_cpu_goroutines{chain=\"$chain\", instance=~\"$instance\"}) by (instance)",
@@ -2095,7 +2095,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "avg(system_cpu_threads{chain=\"$chain\", instance=~\"$instance\"}) by (instance)",
@@ -2111,7 +2111,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -2214,7 +2214,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(system_memory_allocs{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -2228,7 +2228,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "system_memory_used{chain=\"$chain\", instance=~\"$instance\"}",
@@ -2242,7 +2242,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "system_memory_held{chain=\"$chain\", instance=~\"$instance\"}",
@@ -2256,7 +2256,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(system_memory_frees{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -2269,7 +2269,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "system_memory_pauses{chain=\"$chain\", instance=~\"$instance\"}",
@@ -2285,7 +2285,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -2363,7 +2363,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(system_disk_readbytes{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -2376,7 +2376,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(system_disk_writebytes{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -2394,7 +2394,7 @@
       "collapsed": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "DS_PROMETHEUS"
       },
       "gridPos": {
         "h": 1,
@@ -2408,7 +2408,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "DS_PROMETHEUS"
           },
           "refId": "A"
         }
@@ -2419,7 +2419,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -2518,7 +2518,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -2533,7 +2533,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -2548,7 +2548,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "editorMode": "code",
           "expr": "p2p_ingress{chain=\"$chain\", instance=~\"$instance\"}",
@@ -2560,7 +2560,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "editorMode": "code",
           "expr": "p2p_egress{chain=\"$chain\", instance=~\"$instance\"}",
@@ -2576,7 +2576,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -2659,7 +2659,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "p2p_peers{chain=\"$chain\", instance=~\"$instance\"}",
@@ -2672,7 +2672,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(p2p_dials{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -2685,7 +2685,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(p2p_serves{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -2703,7 +2703,7 @@
       "collapsed": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "DS_PROMETHEUS"
       },
       "gridPos": {
         "h": 1,
@@ -2717,7 +2717,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "DS_PROMETHEUS"
           },
           "refId": "A"
         }
@@ -2728,7 +2728,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "description": "Measured in #peers per second",
       "fieldConfig": {
@@ -2796,7 +2796,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_downloader_throttle{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -2814,7 +2814,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "description": "Measured in blocks per second",
       "fieldConfig": {
@@ -2919,7 +2919,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "eth_downloader_throttle{chain=\"$chain\", instance=~\"$instance\"}",
@@ -2933,7 +2933,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_downloader_bodies_in{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -2945,7 +2945,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_downloader_headers_in{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -2957,7 +2957,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_downloader_receipts_in{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -2969,7 +2969,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "eth_downloader_bodies_drop{chain=\"$chain\", instance=~\"$instance\"}",
@@ -2981,7 +2981,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "eth_downloader_headers_drop{chain=\"$chain\", instance=~\"$instance\"}",
@@ -2993,7 +2993,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "eth_downloader_receipts_drop{chain=\"$chain\", instance=~\"$instance\"}",
@@ -3005,7 +3005,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "eth_downloader_bodies_timeout{chain=\"$chain\", instance=~\"$instance\"}",
@@ -3017,7 +3017,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "eth_downloader_headers_timeout{chain=\"$chain\", instance=~\"$instance\"}",
@@ -3029,7 +3029,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "eth_downloader_receipts_timeout{chain=\"$chain\", instance=~\"$instance\"}",
@@ -3045,7 +3045,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "description": "Measured in blocks per second",
       "fieldConfig": {
@@ -3129,7 +3129,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "eth_downloader_throttle{chain=\"$chain\", instance=~\"$instance\"}",
@@ -3143,7 +3143,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_downloader_bodies_in{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -3155,7 +3155,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_downloader_headers_in{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -3167,7 +3167,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_downloader_receipts_in{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -3179,7 +3179,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "eth_downloader_bodies_drop{chain=\"$chain\", instance=~\"$instance\"}",
@@ -3191,7 +3191,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "eth_downloader_headers_drop{chain=\"$chain\", instance=~\"$instance\"}",
@@ -3203,7 +3203,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "eth_downloader_receipts_drop{chain=\"$chain\", instance=~\"$instance\"}",
@@ -3215,7 +3215,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "eth_downloader_bodies_timeout{chain=\"$chain\", instance=~\"$instance\"}",
@@ -3227,7 +3227,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "eth_downloader_headers_timeout{chain=\"$chain\", instance=~\"$instance\"}",
@@ -3239,7 +3239,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "eth_downloader_receipts_timeout{chain=\"$chain\", instance=~\"$instance\"}",
@@ -3255,7 +3255,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -3338,7 +3338,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_downloader_bodies_req{chain=\"$chain\", instance=~\"$instance\", quantile=\"$quantile\"}[1m])",
@@ -3350,7 +3350,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_downloader_headers_req{chain=\"$chain\", instance=~\"$instance\", quantile=\"$quantile\"}[1m])",
@@ -3362,7 +3362,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_downloader_receipts_req{chain=\"$chain\", instance=~\"$instance\", quantile=\"$quantile\"}[1m])",
@@ -3379,7 +3379,7 @@
       "collapsed": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "DS_PROMETHEUS"
       },
       "gridPos": {
         "h": 1,
@@ -3393,7 +3393,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "DS_PROMETHEUS"
           },
           "refId": "A"
         }
@@ -3404,7 +3404,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -3453,7 +3453,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "eth_fetcher_transaction_waiting_peers{chain=\"$chain\", instance=~\"$instance\"}",
@@ -3468,7 +3468,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -3517,7 +3517,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "eth_fetcher_transaction_waiting_hashes{chain=\"$chain\", instance=~\"$instance\"}",
@@ -3532,7 +3532,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -3581,7 +3581,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "eth_fetcher_transaction_queueing_peers{chain=\"$chain\", instance=~\"$instance\"}",
@@ -3596,7 +3596,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -3641,7 +3641,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "eth_fetcher_transaction_queueing_hashes{chain=\"$chain\", instance=~\"$instance\"}",
@@ -3656,7 +3656,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -3705,7 +3705,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "eth_fetcher_transaction_fetching_peers{chain=\"$chain\", instance=~\"$instance\"}",
@@ -3720,7 +3720,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -3765,7 +3765,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "eth_fetcher_transaction_fetching_hashes{chain=\"$chain\", instance=~\"$instance\"}",
@@ -3780,7 +3780,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "description": "Measured in blocks per second",
       "fieldConfig": {
@@ -3864,7 +3864,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_fetcher_transaction_request_out{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -3876,7 +3876,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_fetcher_transaction_request_fail{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -3888,7 +3888,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_fetcher_transaction_request_done{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -3900,7 +3900,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_fetcher_transaction_request_timeout{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -3912,7 +3912,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_fetcher_transaction_replies_in{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -3924,7 +3924,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_fetcher_transaction_replies_known{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -3936,7 +3936,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_fetcher_transaction_replies_underpriced{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -3948,7 +3948,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_fetcher_transaction_replies_otherreject{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -3964,7 +3964,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "description": "Measured in blocks per second",
       "fieldConfig": {
@@ -4069,7 +4069,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_fetcher_block_bodies{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -4081,7 +4081,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_fetcher_block_headers{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -4093,7 +4093,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_fetcher_block_filter_headers_in{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -4105,7 +4105,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_fetcher_block_filter_headers_out{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -4117,7 +4117,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_fetcher_block_filter_bodies_in{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -4129,7 +4129,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_fetcher_block_filter_bodies_out{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -4146,7 +4146,7 @@
       "collapsed": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "DS_PROMETHEUS"
       },
       "gridPos": {
         "h": 1,
@@ -4160,7 +4160,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "DS_PROMETHEUS"
           },
           "refId": "A"
         }
@@ -4171,7 +4171,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -4253,7 +4253,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -4268,7 +4268,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "editorMode": "code",
           "expr": "rate(eth_db_chaindata_disk_write{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -4281,7 +4281,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "editorMode": "code",
           "exemplar": true,
@@ -4296,7 +4296,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "editorMode": "code",
           "expr": "rate(eth_db_chaindata_ancient_write{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -4309,7 +4309,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_db_chaindata_compact_input{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -4321,7 +4321,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_db_chaindata_compact_output{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -4337,7 +4337,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -4415,7 +4415,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "eth_db_chaindata_disk_read{chain=\"$chain\", instance=~\"$instance\"}",
           "format": "time_series",
@@ -4426,7 +4426,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "eth_db_chaindata_disk_write{chain=\"$chain\", instance=~\"$instance\"}",
           "format": "time_series",
@@ -4437,7 +4437,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "eth_db_chaindata_ancient_read{chain=\"$chain\", instance=~\"$instance\"}",
           "format": "time_series",
@@ -4448,7 +4448,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "eth_db_chaindata_ancient_write{chain=\"$chain\", instance=~\"$instance\"}",
           "format": "time_series",
@@ -4463,7 +4463,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -4541,7 +4541,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "eth_db_chaindata_disk_size{chain=\"$chain\", instance=~\"$instance\"}",
           "format": "time_series",
@@ -4552,7 +4552,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "eth_db_chaindata_ancient_size{chain=\"$chain\", instance=~\"$instance\"}",
           "format": "time_series",
@@ -4567,7 +4567,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -4628,7 +4628,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "eth_db_chaindata_compact_writedelay_counter{chain=\"$chain\", instance=~\"$instance\"}",
@@ -4645,7 +4645,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -4764,7 +4764,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_db_chaindata_compact_time{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -4777,7 +4777,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_db_chaindata_compact_nonlevel0{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -4790,7 +4790,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_db_chaindata_compact_level0{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -4803,7 +4803,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_db_chaindata_compact_memory{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -4816,7 +4816,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_db_chaindata_compact_seek{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -4828,7 +4828,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_db_chaindata_compact_writedelay_duration{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -4840,7 +4840,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(eth_db_chaindata_compact_writedelay_counter{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -4856,7 +4856,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -4929,7 +4929,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "eth_db_chaindata_compact_writedelay_duration{chain=\"$chain\", instance=~\"$instance\"}",
@@ -4947,7 +4947,7 @@
       "collapsed": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "PBFA97CFB590B2093"
+        "uid": "DS_PROMETHEUS"
       },
       "gridPos": {
         "h": 1,
@@ -4961,7 +4961,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "PBFA97CFB590B2093"
+            "uid": "DS_PROMETHEUS"
           },
           "refId": "A"
         }
@@ -4972,7 +4972,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -5052,7 +5052,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "editorMode": "code",
           "exemplar": false,
@@ -5068,7 +5068,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "editorMode": "code",
           "expr": "rate(trie_memcache_clean_write{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -5086,7 +5086,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -5162,7 +5162,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "rate(trie_memcache_gc_size{chain=\"$chain\", instance=~\"$instance\"}[1m])",
           "format": "time_series",
@@ -5174,7 +5174,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "rate(trie_memcache_flush_size{chain=\"$chain\", instance=~\"$instance\"}[1m])",
           "format": "time_series",
@@ -5186,7 +5186,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "expr": "rate(trie_memcache_commit_size{chain=\"$chain\", instance=~\"$instance\"}[1m])",
           "format": "time_series",
@@ -5201,7 +5201,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -5304,7 +5304,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(trie_memcache_clean_hit{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -5318,7 +5318,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(trie_memcache_clean_miss{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -5332,7 +5332,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(trie_memcache_clean_hit{chain=\"$chain\", instance=~\"$instance\"}[1m])/(rate(trie_memcache_clean_miss{chain=\"$chain\", instance=~\"$instance\"}[1m])+rate(trie_memcache_clean_hit{chain=\"$chain\", instance=~\"$instance\"}[1m]))",
@@ -5348,7 +5348,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -5451,7 +5451,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(trie_memcache_dirty_hit{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -5465,7 +5465,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(trie_memcache_dirty_miss{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -5479,7 +5479,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(trie_memcache_dirty_hit{chain=\"$chain\", instance=~\"$instance\"}[1m])/(rate(trie_memcache_dirty_miss{chain=\"$chain\", instance=~\"$instance\"}[1m])+rate(trie_memcache_dirty_hit{chain=\"$chain\", instance=~\"$instance\"}[1m]))",
@@ -5495,7 +5495,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -5576,7 +5576,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(trie_memcache_gc_nodes{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -5590,7 +5590,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(trie_memcache_commit_nodes{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -5604,7 +5604,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(trie_memcache_flush_nodes{chain=\"$chain\", instance=~\"$instance\"}[1m])",
@@ -5620,7 +5620,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "ddshms3dlineoe"
+        "uid": "DS_PROMETHEUS"
       },
       "fieldConfig": {
         "defaults": {
@@ -5701,7 +5701,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(trie_memcache_gc_time{chain=\"$chain\", instance=~\"$instance\", quantile=~\"$quantile\"}[1m])",
@@ -5715,7 +5715,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(trie_memcache_commit_time{chain=\"$chain\", instance=~\"$instance\", quantile=~\"$quantile\"}[1m])",
@@ -5729,7 +5729,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "ddshms3dlineoe"
+            "uid": "DS_PROMETHEUS"
           },
           "exemplar": true,
           "expr": "rate(trie_memcache_flush_time{chain=\"$chain\", instance=~\"$instance\", quantile=~\"$quantile\"}[1m])",
@@ -5763,7 +5763,7 @@
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "ddshms3dlineoe"
+          "uid": "DS_PROMETHEUS"
         },
         "definition": "label_values(chain_head_block{}, chain)",
         "description": "go-ethereum compatible chains",
@@ -5791,7 +5791,7 @@
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "ddshms3dlineoe"
+          "uid": "DS_PROMETHEUS"
         },
         "definition": "label_values(chain_head_block{chain=~\"$chain\"}, instance)",
         "hide": 0,

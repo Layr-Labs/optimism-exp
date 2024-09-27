@@ -29,3 +29,8 @@ scrape_configs:
   - job_name: "eigenda-proxy"
     static_configs:
       - targets: ["da-server:7300"]
+
+  - job_name: "ethereum-metrics-exporter-l2"
+    scrape_interval: 2s # info about every l2 block
+    static_configs:
+      - targets: ["ethereum-metrics-exporter-l2:9090"]

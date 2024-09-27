@@ -11,6 +11,7 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 **Table of Contents**
 
+- [devnet with eigenda alt-da](#devnet-with-eigenda-alt-da)
 - [What is Optimism?](#what-is-optimism)
 - [Documentation](#documentation)
 - [Specification](#specification)
@@ -25,6 +26,32 @@
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+## devnet with eigenda alt-da
+
+First you will need to build the dev docker image for eigenda-proxy, until we make a new release.
+
+```bash
+git clone https://github.com/Layr-Labs/eigenda-proxy.git
+make docker-build
+```
+
+Now create a `.env` file in the root of this repository with the following content (you will need to add an ecdsa private key that is authorized on the eigenda disperser, as well as an ethereum rpc endpoint):
+
+```bash
+MEMSTORE_ENABLED=false
+EIGENDA_PROXY_EIGENDA_SERVICE_MANAGER_ADDR=0x54A03db2784E3D0aCC08344D05385d0b62d4F432 #holesky preprod
+EIGENDA_PROXY_EIGENDA_SIGNER_PRIVATE_KEY_HEX=
+EIGENDA_PROXY_EIGENDA_ETH_RPC=
+```
+
+Finally run `make altda-devnet-up` to start the devnet with the eigenda proxy as alt-da server, which sends batches to `disperser-preprod-holesky.eigenda.xyz:443`.
+
+This will also start a grafana instance, which you can access at `http://localhost:3000` with user:pw `admin:admin`.
+
+![](./ops-bedrock/monitoring/grafana/grafana-dashboard-overview-high-throughput.png)
+
+The devnet starts an instance of https://github.com/Layr-Labs/evm-tx-load-gen which is submitting transactions with large amounts of calldata to reach 1.5MB/s of throughput.
 
 ## What is Optimism?
 

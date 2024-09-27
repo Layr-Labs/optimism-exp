@@ -188,20 +188,23 @@ services:
       OP_BATCHER_L1_ETH_RPC: http://l1:8545
       OP_BATCHER_L2_ETH_RPC: http://l2:8545
       OP_BATCHER_ROLLUP_RPC: http://op-node:8545
-      OP_BATCHER_MAX_CHANNEL_DURATION: 2
+      OP_BATCHER_MAX_CHANNEL_DURATION: 10 # 10 L1 blocks = 60 seconds
       OP_BATCHER_SUB_SAFETY_MARGIN: 4 # SWS is 15, ChannelTimeout is 40
-      OP_BATCHER_POLL_INTERVAL: 1s
+      OP_BATCHER_POLL_INTERVAL: 2s
       OP_BATCHER_NUM_CONFIRMATIONS: 1
+      OP_BATCHER_MAX_PENDING_TX: 0 # no limit
       OP_BATCHER_MNEMONIC: test test test test test test test test test test test junk
       OP_BATCHER_SEQUENCER_HD_PATH: "m/44'/60'/0'/0/2"
       OP_BATCHER_PPROF_ENABLED: "true"
       OP_BATCHER_METRICS_ENABLED: "true"
       OP_BATCHER_RPC_ENABLE_ADMIN: "true"
-      OP_BATCHER_BATCH_TYPE: 1
+      OP_BATCHER_BATCH_TYPE: 0
       OP_BATCHER_ALTDA_ENABLED: "${ALTDA_ENABLED}"
       OP_BATCHER_ALTDA_DA_SERVICE: "${ALTDA_SERVICE}"
       OP_BATCHER_ALTDA_DA_SERVER: "http://da-server:3100"
       OP_BATCHER_DATA_AVAILABILITY_TYPE: "${DA_TYPE}"
+      OP_BATCHER_ALTDA_MAX_CONCURRENT_DA_REQUESTS: 200
+      OP_BATCHER_TARGET_NUM_FRAMES: 16
 
   op-challenger:
     depends_on:
@@ -238,6 +241,58 @@ services:
       OP_CHALLENGER_NUM_CONFIRMATIONS: 1
 
   da-server:
+    # platform: linux/amd64
+    image: ghcr.io/layr-labs/eigenda-proxy:dev
+    depends_on:
+      - redis-cache
+    environment:
+      EIGENDA_PROXY_ADDR: 0.0.0.0
+      EIGENDA_PROXY_PORT: 3100
+      EIGENDA_PROXY_METRICS_ENABLED: true
+      EIGENDA_PROXY_METRICS_PORT: 7300
+      # MEMSTORE_ENABLED=true means data id only stored in a memcache inside the proxy,
+      # and is not forwarded to eigenda.
+      MEMSTORE_ENABLED: ${MEMSTORE_ENABLED-true}
+      MEMSTORE_EXPIRATION: 45m
+      MEMSTORE_PUT_LATENCY: 1m
+      MEMSTORE_GET_LATENCY: 1s
+      # if MEMSTORE_ENABLED=false, then these variables need to be set properly to connect to eigenda
+      EIGENDA_PROXY_EIGENDA_DISPERSER_RPC: disperser-preprod-holesky.eigenda.xyz:443
+      EIGENDA_PROXY_EIGENDA_SERVICE_MANAGER_ADDR: ${EIGENDA_PROXY_EIGENDA_SERVICE_MANAGER_ADDR}
+      EIGENDA_PROXY_EIGENDA_SIGNER_PRIVATE_KEY_HEX: ${EIGENDA_PROXY_EIGENDA_SIGNER_PRIVATE_KEY_HEX}
+      EIGENDA_PROXY_EIGENDA_ETH_RPC: ${EIGENDA_PROXY_EIGENDA_ETH_RPC}
+      EIGENDA_PROXY_REDIS_ENDPOINT: redis-cache:6379
+      EIGENDA_PROXY_REDIS_EVICTION: 1h
+      EIGENDA_PROXY_CACHE_TARGETS: "redis"
+      EIGENDA_PROXY_ETH_CONFIRMATION_DEPTH: 0 # don't wait for finality (-1)
+    ports:
+      - 3100:3100
+      - 6969:7300
+
+  evm-tx-load-gen:
+    image: ghcr.io/layr-labs/evm-tx-load-gen:latest
+    depends_on:
+      - l2
+    environment:
+      TRAFFIC_GENERATOR_HOSTNAME: http://l2:8545
+      TRAFFIC_GENERATOR_TIMEOUT: 30s
+      TRAFFIC_GENERATOR_NUM_INSTANCES: 1
+      TRAFFIC_GENERATOR_SIGNER_ADDRESSES: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+      TRAFFIC_GENERATOR_SIGNER_PRIVATE_KEYS_HEX: ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
+      # to send 1 MB/s, set interval to 125ms and pad_size to 130958
+      # with the tx overhead (signature, nonce, etc) the actual txs send will have size exactly 128KB = 131072 bytes
+      # this will send 8 txs/s, each of size 128KB, such that 8 * 128 KB = 1 MB
+      # max block size with 30M gas is ~1.7MB. To make sure blocks are almost full but txpool doesn't just keep increasing unboundedly,
+      # we send 1.5MB of data (100KB every 133ms)
+      TRAFFIC_GENERATOR_REQUEST_INTERVAL: 133ms
+      TRAFFIC_GENERATOR_PAD_SIZE: 100000
+
+  # for eigenda-proxy da-server
+  redis-cache:
+    image: redis:7.0.11
+    ports:
+      - "6379:6379"
+
   grafana:
     image: grafana/grafana:11.1.0
     restart: unless-stopped
@@ -280,6 +335,10 @@ services:
       - ./monitoring/promtail:/etc/promtail
       - /var/run/docker.sock:/var/run/docker.sock # Mount Docker socket to read container logs
     command: -config.file=/etc/promtail/config.yaml
+
+  ethereum-metrics-exporter-l2:
+    image: ethpandaops/ethereum-metrics-exporter:latest
+    command: --consensus-url http://op-node:8545 --execution-url http://l2:8545
 
   sentinel:
     image: quarry/sentinel # TODO(10141): We need a public image for this (sentinel is out of repo)

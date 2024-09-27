@@ -186,6 +186,12 @@ devnet-up: pre-devnet ## Starts the local devnet
 	PYTHONPATH=./bedrock-devnet $(PYTHON) ./bedrock-devnet/main.py --monorepo-dir=.
 .PHONY: devnet-up
 
+altda-devnet-up:
+	@( \
+		set -a; . ./.env; set +a; \
+		DEVNET_ALTDA=true GENERIC_ALTDA=true TRAFFIC_GEN=true make devnet-up; \
+	)
+
 devnet-test: pre-devnet ## Runs tests on the local devnet
 	make -C op-e2e test-devnet
 .PHONY: devnet-test
