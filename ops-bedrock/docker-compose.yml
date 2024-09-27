@@ -12,9 +12,7 @@ volumes:
   da_data:
   op_log:
 
-
 services:
-
   l1:
     build:
       context: .
@@ -34,8 +32,8 @@ services:
     depends_on:
       - l1
     build:
-        context: .
-        dockerfile: l1-lighthouse.Dockerfile
+      context: .
+      dockerfile: l1-lighthouse.Dockerfile
     ports:
       - "9000:9000"
       - "5052:5052"
@@ -56,8 +54,8 @@ services:
       - l1
       - l1-bn
     build:
-        context: .
-        dockerfile: l1-lighthouse.Dockerfile
+      context: .
+      dockerfile: l1-lighthouse.Dockerfile
     volumes:
       - "l1_vc_data:/db"
       - "${PWD}/beacon-data/data/keys:/validator_setup/validators"
@@ -82,7 +80,7 @@ services:
       - "l2_data:/db"
       - "${PWD}/../.devnet/genesis-l2.json:/genesis.json"
       - "${PWD}/test-jwt-secret.txt:/config/jwt-secret.txt"
-    entrypoint:  # pass the L2 specific flags by overriding the entry-point and adding extra arguments
+    entrypoint: # pass the L2 specific flags by overriding the entry-point and adding extra arguments
       - "/bin/sh"
       - "/entrypoint.sh"
     environment:
@@ -240,22 +238,48 @@ services:
       OP_CHALLENGER_NUM_CONFIRMATIONS: 1
 
   da-server:
-    image: us-docker.pkg.dev/oplabs-tools-artifacts/images/da-server:devnet
-    build:
-      context: ../
-      dockerfile: ops/docker/op-stack-go/Dockerfile
-      target: da-server-target
-    command: >
-      da-server
-      --file.path=/data
-      --addr=0.0.0.0
-      --port=3100
-      --log.level=debug
-      --generic-commitment="${ALTDA_GENERIC_DA}"
-    ports:
-      - "3100:3100"
+  grafana:
+    image: grafana/grafana:11.1.0
+    restart: unless-stopped
+    env_file:
+      - monitoring/grafana/grafana.env
     volumes:
-      - "da_data:/data"
+      - ./monitoring/grafana/provisioning/:/etc/grafana/provisioning/:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+      # - grafana_data:/var/lib/grafana
+    ports:
+      - 3000:3000
+
+  prometheus:
+    image: prom/prometheus:latest
+    restart: unless-stopped
+    # env_file:
+    # - .env
+    volumes:
+      - ./monitoring/prometheus:/etc/prometheus
+      # - prometheus_data:/prometheus
+    ports:
+      - 9090:9090
+    command: --config.file=/etc/prometheus/prometheus.yml --log.level=debug
+
+  loki:
+    image: grafana/loki:3.1.1
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/loki:/etc/loki
+    ports:
+      - 3200:3200
+    command: -config.file=/etc/loki/config.yaml
+
+  promtail:
+    image: grafana/promtail:3.1.1
+    restart: unless-stopped
+    volumes:
+      # uncomment to scrape system logs
+      # - /var/log:/var/log
+      - ./monitoring/promtail:/etc/promtail
+      - /var/run/docker.sock:/var/run/docker.sock # Mount Docker socket to read container logs
+    command: -config.file=/etc/promtail/config.yaml
 
   sentinel:
     image: quarry/sentinel # TODO(10141): We need a public image for this (sentinel is out of repo)
