@@ -207,6 +207,7 @@ func (bs *BatcherService) initChannelConfig(cfg *CLIConfig) error {
 		TargetNumFrames:       cfg.TargetNumFrames,
 		SubSafetyMargin:       cfg.SubSafetyMargin,
 		BatchType:             cfg.BatchType,
+		UseAltDA:              bs.UseAltDA,
 	}
 
 	switch cfg.DataAvailabilityType {
