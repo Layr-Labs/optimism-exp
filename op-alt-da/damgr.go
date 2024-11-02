@@ -71,6 +71,8 @@ type DA struct {
 	finalizedHead    eth.L1BlockRef // the latest recorded finalized head as per the challenge contract
 	l1FinalizedHead  eth.L1BlockRef // the latest recorded finalized head as per the l1 finalization signal
 
+	l1Fetcher L1Fetcher
+
 	// flag the reset function we are resetting because of an expired challenge
 	resetting bool
 
@@ -78,18 +80,19 @@ type DA struct {
 }
 
 // NewAltDA creates a new AltDA instance with the given log and CLIConfig.
-func NewAltDA(log log.Logger, cli CLIConfig, cfg Config, metrics Metricer) *DA {
-	return NewAltDAWithStorage(log, cfg, cli.NewDAClient(), metrics)
+func NewAltDA(log log.Logger, cli CLIConfig, cfg Config, metrics Metricer, l1Fetcher L1Fetcher) *DA {
+	return NewAltDAWithStorage(log, cfg, cli.NewDAClient(), metrics, l1Fetcher)
 }
 
 // NewAltDAWithStorage creates a new AltDA instance with the given log and DAStorage interface.
-func NewAltDAWithStorage(log log.Logger, cfg Config, storage DAStorage, metrics Metricer) *DA {
+func NewAltDAWithStorage(log log.Logger, cfg Config, storage DAStorage, metrics Metricer, l1Fetcher L1Fetcher) *DA {
 	return &DA{
-		log:     log,
-		cfg:     cfg,
-		storage: storage,
-		metrics: metrics,
-		state:   NewState(log, metrics, cfg),
+		log:       log,
+		cfg:       cfg,
+		storage:   storage,
+		metrics:   metrics,
+		state:     NewState(log, metrics, cfg),
+		l1Fetcher: l1Fetcher,
 	}
 }
 
@@ -125,6 +128,15 @@ func (d *DA) updateFinalizedHead(l1Finalized eth.L1BlockRef) {
 	var zero eth.L1BlockRef
 	if lastPrunedCommIncBlock != zero {
 		d.finalizedHead = lastPrunedCommIncBlock
+	// FIXME: this approach won't work.... updateFinalizedHead can't return an error
+	//        because its called as part of an event handler, which all have the signature
+	//        OnEvent(event.Event) bool and can't return errors it seems...
+	// Goal here was to move the stuff from updateFinalizedFromL1 up here, to make the code clearer
+	} else if d.state.NoCommitments() {
+		if err := d.updateFinalizedFromL1(ctx, l1); err != nil {
+			return err
+		}
+		d.metrics.RecordChallengesHead("finalized", d.finalizedHead.Number)
 	}
 }
 

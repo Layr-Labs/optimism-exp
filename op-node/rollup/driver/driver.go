@@ -2,6 +2,7 @@ package driver
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/log"
@@ -160,6 +161,7 @@ func NewDriver(
 	drain Drain,
 	driverCfg *Config,
 	cfg *rollup.Config,
+	altDACfg *altda.CLIConfig,
 	l2 L2Chain,
 	l1 L1Chain,
 	supervisor interop.InteropBackend, // may be nil pre-interop.
@@ -168,12 +170,12 @@ func NewDriver(
 	network Network,
 	log log.Logger,
 	metrics Metrics,
+	altDAMetrics altda.Metricer,
 	sequencerStateListener sequencing.SequencerStateListener,
 	safeHeadListener rollup.SafeHeadListener,
 	syncCfg *sync.Config,
 	sequencerConductor conductor.SequencerConductor,
-	altDA AltDAIface,
-) *Driver {
+) (*Driver, error) {
 	driverCtx, driverCancel := context.WithCancel(context.Background())
 
 	opts := event.DefaultRegisterOpts()
@@ -194,6 +196,14 @@ func NewDriver(
 
 	l1 = NewMeteredL1Fetcher(l1Tracker, metrics)
 	verifConfDepth := confdepth.NewConfDepth(driverCfg.VerifierConfDepth, statusTracker.L1Head, l1)
+
+	// if altDA is not explicitly activated in the node CLI, the config + any error will be ignored.
+	rpCfg, err := cfg.GetOPAltDAConfig()
+	if altDACfg.Enabled && err != nil {
+		driverCancel()
+		return nil, fmt.Errorf("failed to get altDA config: %w", err)
+	}
+	altDA := altda.NewAltDA(log, *altDACfg, rpCfg, altDAMetrics, verifConfDepth)
 
 	ec := engine.NewEngineController(l2, log, metrics, cfg, syncCfg,
 		sys.Register("engine-controller", nil, opts))
@@ -277,5 +287,5 @@ func NewDriver(
 		altSync:          altSync,
 	}
 
-	return driver
+	return driver, nil
 }

@@ -15,7 +15,6 @@ import (
 	gethevent "github.com/ethereum/go-ethereum/event"
 	"github.com/ethereum/go-ethereum/log"
 
-	altda "github.com/ethereum-optimism/optimism/op-alt-da"
 	"github.com/ethereum-optimism/optimism/op-node/metrics"
 	"github.com/ethereum-optimism/optimism/op-node/node/safedb"
 	"github.com/ethereum-optimism/optimism/op-node/p2p"
@@ -408,12 +407,6 @@ func (n *OpNode) initL2(ctx context.Context, cfg *Config) error {
 		sequencerConductor = NewConductorClient(cfg, n.log, n.metrics)
 	}
 
-	// if altDA is not explicitly activated in the node CLI, the config + any error will be ignored.
-	rpCfg, err := cfg.Rollup.GetOPAltDAConfig()
-	if cfg.AltDA.Enabled && err != nil {
-		return fmt.Errorf("failed to get altDA config: %w", err)
-	}
-	altDA := altda.NewAltDA(n.log, cfg.AltDA, rpCfg, n.metrics.AltDAMetrics)
 	if cfg.SafeDBPath != "" {
 		n.log.Info("Safe head database enabled", "path", cfg.SafeDBPath)
 		safeDB, err := safedb.NewSafeDB(n.log, cfg.SafeDBPath)
@@ -424,8 +417,11 @@ func (n *OpNode) initL2(ctx context.Context, cfg *Config) error {
 	} else {
 		n.safeDB = safedb.Disabled
 	}
-	n.l2Driver = driver.NewDriver(n.eventSys, n.eventDrain, &cfg.Driver, &cfg.Rollup, n.l2Source, n.l1Source,
-		n.supervisor, n.beacon, n, n, n.log, n.metrics, cfg.ConfigPersistence, n.safeDB, &cfg.Sync, sequencerConductor, altDA)
+	n.l2Driver, err = driver.NewDriver(n.eventSys, n.eventDrain, &cfg.Driver, &cfg.Rollup, &cfg.AltDA, n.l2Source, n.l1Source,
+		n.supervisor, n.beacon, n, n, n.log, n.metrics, n.metrics.AltDAMetrics, cfg.ConfigPersistence, n.safeDB, &cfg.Sync, sequencerConductor)
+	if err != nil {
+		return fmt.Errorf("failed to create L2 engine driver: %w", err)
+	}
 	return nil
 }
 
