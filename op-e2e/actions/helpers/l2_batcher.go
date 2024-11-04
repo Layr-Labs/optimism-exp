@@ -308,6 +308,13 @@ func (s *L2Batcher) ReadNextOutputFrame(t Testing) []byte {
 	return data.Bytes()
 }
 
+func (s *L2Batcher) ActFailoverToEthDA(t Testing) {
+	if !s.l2BatcherCfg.UseAltDA {
+		t.Fatalf("cannot failover to ethda when already using ethda")
+	}
+	s.l2BatcherCfg.UseAltDA = false
+}
+
 // ActL2BatchSubmit constructs a batch tx from previous buffered L2 blocks, and submits it to L1
 func (s *L2Batcher) ActL2BatchSubmit(t Testing, txOpts ...func(tx *types.DynamicFeeTx)) {
 	s.ActL2BatchSubmitRaw(t, s.ReadNextOutputFrame(t), txOpts...)
