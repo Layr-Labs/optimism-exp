@@ -123,8 +123,7 @@ func (d *DA) updateFinalizedHead(l1Finalized eth.L1BlockRef) {
 	// When no commitments are left to be pruned (one example is if we have failed over to ethda)
 	// then updateFinalizedFromL1 becomes the main driver of the finalized head.
 	// Note that updateFinalizedFromL1 is only called when d.state.NoCommitments() is true.
-	var zero eth.L1BlockRef
-	if lastPrunedCommIncBlock != zero {
+	if lastPrunedCommIncBlock != (eth.L1BlockRef{}) {
 		d.finalizedHead = lastPrunedCommIncBlock
 	}
 }
