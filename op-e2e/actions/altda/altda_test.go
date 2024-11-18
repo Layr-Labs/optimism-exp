@@ -644,6 +644,7 @@ func TestAltDA_Finalization(gt *testing.T) {
 	require.Equal(t, uint64(36), a.sequencer.SyncStatus().FinalizedL2.Number)
 }
 
+// This test tests ethDA -> altDA -> ethDA finalization behavior, simulating a temp altDA failure.
 func TestAltDA_FinalizationAfterEthDAFailover(gt *testing.T) {
 	t := helpers.NewDefaultTesting(gt)
 	// we only print critical logs to be able to see the statusLogs
@@ -666,13 +667,13 @@ func TestAltDA_FinalizationAfterEthDAFailover(gt *testing.T) {
 	}
 
 	// We swap out altda batcher for ethda batcher
-	harness.batcher.ActFailoverToEthDA(t)
+	harness.batcher.ActAltDAFailoverToEthDA(t)
 
-	for i := 0; i < 2; i++ {
+	for i := 0; i < 3; i++ {
 		ssBefore := harness.sequencer.SyncStatus()
 		harness.ActNewL2TxFinalized(t)
 		if i == 0 {
-			// TODO: figure out why this is needed
+			// TODO: figure out why we need to act twice for the first time after failover.
 			// I think it's because the L1 driven finalizedHead is set to L1FinalizedHead-ChallengeWindow (see damgr.go updateFinalizedFromL1),
 			// so it trails behind by an extra challenge_window when we switch over to ethDA.
 			harness.ActNewL2TxFinalized(t)
@@ -680,5 +681,26 @@ func TestAltDA_FinalizationAfterEthDAFailover(gt *testing.T) {
 		ssAfter := harness.sequencer.SyncStatus()
 		// Even after failover, the finalized head should continue advancing normally
 		require.Equal(t, ssBefore.FinalizedL2.Number+diffL2Blocks, ssAfter.FinalizedL2.Number)
+	}
+
+	// Revert back to altda batcher (simulating that altda's temporary outage is resolved)
+	harness.batcher.ActAltDAFallbackToAltDA(t)
+
+	for i := 0; i < 3; i++ {
+		ssBefore := harness.sequencer.SyncStatus()
+		harness.ActNewL2TxFinalized(t)
+		ssAfter := harness.sequencer.SyncStatus()
+
+		// Even after fallback to altda, the finalized head should continue advancing normally
+		if i == 0 {
+			// This is the opposite as the altda->ethda direction. In this case, the first time we fallback to altda,
+			// the finalized head will advance by 2*diffL2Blocks: in ethda mode when driven by L1 finalization,
+			// the head is set to L1FinalizedHead-ChallengeWindow. After sending an altda commitment, the finalized head
+			// is now driven by the finalization of the altda commitment.
+			require.Equal(t, ssBefore.FinalizedL2.Number+2*diffL2Blocks, ssAfter.FinalizedL2.Number)
+		} else {
+			require.Equal(t, ssBefore.FinalizedL2.Number+diffL2Blocks, ssAfter.FinalizedL2.Number)
+		}
+
 	}
 }
