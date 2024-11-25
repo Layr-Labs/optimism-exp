@@ -394,6 +394,86 @@ contract PreimageOracle is ISemver {
         preimageLengths[key] = 32;
     }
 
+    function loadEigenDABlobPart(
+        uint256 _z,
+        uint256 _y,
+        bytes calldata v2Cert,
+        bytes calldata _proof, // kzgproof
+        uint256 _partOffset // offset of preimage to load
+    ) external {
+        bytes32 key;
+        bytes32 part;
+        key = keccak256(abi.encodePacked(v2Cert, _z));
+
+        // put the following block into an external call from an external contract
+        bool validCert = verifyEigenDAV2Cert(_z, _y, v2Cert, _proof);
+
+        assembly {
+            // we leave solidity slots 0x40 and 0x60 untouched, and everything after as scratch-memory.
+            let ptr := 0x80
+            // revert if part offset >= 32+8 (i.e. parts must be within bounds)
+            if iszero(lt(_partOffset, 0x28)) {
+                // Store "PartOffsetOOB()"
+                mstore(0x00, 0xfe254987)
+                // Revert with "PartOffsetOOB()"
+                revert(0x1C, 0x04)
+            }
+            // Clean the word at `ptr + 0x28` to ensure that data out of bounds of the preimage is zero, if the part
+            // offset requires a partial read.
+            mstore(add(ptr, 0x28), 0x00)
+            // put size (32) as a big-endian uint64 at start of pre-image
+            mstore(ptr, shl(192, 0x20))
+            // copy preimage payload into memory so we can hash and read it.
+            mstore(add(ptr, 0x08), _y)
+            // Note that it includes the 8-byte big-endian uint64 length prefix. This will be zero-padded at the end,
+            // since memory at end is guaranteed to be clean.
+            part := mload(add(ptr, _partOffset))
+
+            // Compute the key: `keccak256(v2Cert ++ z)`. Since the exact number of btyes that is copied into
+            // scratch space is the same size as the hash input, there's no concern of dirty memory being read into
+            // the hash input.
+            calldatacopy(ptr, v2Cert.offset, v2Cert.length)
+            mstore(add(ptr, v2Cert.length), _z)
+            let h := keccak256(ptr, add(v2Cert.length, 32))
+            // mask out prefix byte, replace with type 3 byte
+            key := or(and(h, not(shl(248, 0xFF))), shl(248, 0x03))
+        }
+
+
+        if (validCert) {
+            preimagePartOk[key][_partOffset] = true;
+            preimageParts[key][_partOffset] = part;
+            preimageLengths[key] = 32;
+        } else {
+            // if not a valid Cert,
+            preimagePartOk[key][_partOffset] = true;
+            // comment this out, since value of preimageParts map is bytes32
+            // preimageParts[key][_partOffset] = ;
+            preimageLengths[key] = 0;
+        }
+    }
+
+    // this function should have been moved outside of this contract
+    function verifyEigenDAV2Cert (
+        uint256 _z,
+        uint256 _y,
+        bytes calldata v2Cert,
+        bytes calldata _proof
+    ) public view returns (bool isValid)
+    {
+        // use the following block to verify the V2Cert
+        {
+            // return false if V2Cert is wrong
+        }
+
+        // verify the kzg verification
+        {
+            // revert
+        }
+
+        return true;
+    }
+
     /// @notice Prepares a precompile result to be read by a precompile key for the specified offset.
     ///         The precompile result data is a concatenation of the precompile call status byte and its return data.
     ///         The preimage key is `6 ++ keccak256(precompile ++ input)[1:]`.
