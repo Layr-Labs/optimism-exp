@@ -394,6 +394,13 @@ contract PreimageOracle is ISemver {
         preimageLengths[key] = 32;
     }
 
+    /// @notice Verifies that `p(_z) = _y` given `_commitment` that corresponds to the polynomial `p(x)` and a KZG
+    //          proof. The value `y` is the pre-image, and the preimage key is `5 ++ keccak256(_commitment ++ z)[1:]`.
+    /// @param _z Big endian point value. Part of the preimage key.
+    /// @param _y Big endian point value. The preimage for the key.
+    /// @param v2Cert The v2Cert to the polynomial. variable length dependin on the number of non-signers, part of the preimage key.
+    /// @param _proof The KZG proof, not a part of the preimage key.
+    /// @param _partOffset The offset of the preimage to store.
     function loadEigenDABlobPart(
         uint256 _z,
         uint256 _y,
@@ -406,8 +413,18 @@ contract PreimageOracle is ISemver {
         key = keccak256(abi.encodePacked(v2Cert, _z));
 
         // put the following block into an external call from an external contract
-        bool validCert = verifyEigenDAV2Cert(_z, _y, v2Cert, _proof);
+        // if cert is right, but the proof is wrong, just revert
+        bool validCert = verifyEigenDACertAndKzgProof(_z, _y, v2Cert, _proof);
+        if (!validCert) {
+            // if not a valid Cert,
+            preimagePartOk[key][_partOffset] = true;
+            // comment this out, since value of preimageParts map is bytes32
+            // preimageParts[key][_partOffset] = ;
+            preimageLengths[key] = 0;
+            return;
+        }
 
+        // we have a valid cert and valid kzg proof,
         assembly {
             // we leave solidity slots 0x40 and 0x60 untouched, and everything after as scratch-memory.
             let ptr := 0x80
@@ -439,22 +456,17 @@ contract PreimageOracle is ISemver {
             key := or(and(h, not(shl(248, 0xFF))), shl(248, 0x03))
         }
 
-
         if (validCert) {
             preimagePartOk[key][_partOffset] = true;
             preimageParts[key][_partOffset] = part;
             preimageLengths[key] = 32;
-        } else {
-            // if not a valid Cert,
-            preimagePartOk[key][_partOffset] = true;
-            // comment this out, since value of preimageParts map is bytes32
-            // preimageParts[key][_partOffset] = ;
-            preimageLengths[key] = 0;
         }
     }
 
     // this function should have been moved outside of this contract
-    function verifyEigenDAV2Cert (
+    // referenced rust implementation
+    // https://github.com/Layr-Labs/nitro-contracts/blob/eigenda-v2.1.0/src/osp/OneStepProverHostIo.sol#L331
+    function verifyEigenDACertAndKzgProof (
         uint256 _z,
         uint256 _y,
         bytes calldata v2Cert,
