@@ -7,6 +7,7 @@ import (
 	"math"
 	"sync"
 
+	altda "github.com/ethereum-optimism/optimism/op-alt-da"
 	"github.com/ethereum-optimism/optimism/op-batcher/metrics"
 	"github.com/ethereum-optimism/optimism/op-node/rollup"
 	"github.com/ethereum-optimism/optimism/op-node/rollup/derive"
@@ -57,17 +58,31 @@ type channelManager struct {
 	channelQueue []*channel
 	// used to lookup channels by tx ID upon tx success / failure
 	txChannels map[string]*channel
+	// Used to lookup altDA commitments by channel ID and frame number.
+	// tx channelID -> first frameNumber in txData -> txData (that contains an altDACommitment)
+	// This is used to store commitments that are received out of order from the altDA layer.
+	// When the commitment for a txdata whose first frame is altDANextChannelFrame, from the channel
+	// pointing to by altDAChannelCursor, is received, it can be sent to L1.
+	// TODO: should we store the commitments inside the channels themselves instead of here?
+	//       prob easier to make sure we don't have memory leaks (forget to delete altDACommitments)
+	altDACommitments map[derive.ChannelID]map[uint16]txData
+	// altDAChannelCursor is an index into the channelQueue. It points at the next channel
+	// that is waiting for an altDA commitment to be submitted to the L1.
+	altDAChannelCursor int
+	// next frame number to send from the channelQueue[altDAChannelCursor] channel
+	altDANextChannelFrame uint16
 }
 
 func NewChannelManager(log log.Logger, metr metrics.Metricer, cfgProvider ChannelConfigProvider, rollupCfg *rollup.Config) *channelManager {
 	return &channelManager{
-		log:         log,
-		metr:        metr,
-		cfgProvider: cfgProvider,
-		defaultCfg:  cfgProvider.ChannelConfig(),
-		rollupCfg:   rollupCfg,
-		outFactory:  NewChannelOut,
-		txChannels:  make(map[string]*channel),
+		log:              log,
+		metr:             metr,
+		cfgProvider:      cfgProvider,
+		defaultCfg:       cfgProvider.ChannelConfig(),
+		rollupCfg:        rollupCfg,
+		outFactory:       NewChannelOut,
+		txChannels:       make(map[string]*channel),
+		altDACommitments: make(map[derive.ChannelID]map[uint16]txData),
 	}
 }
 
@@ -88,6 +103,9 @@ func (s *channelManager) Clear(l1OriginLastSubmittedChannel eth.BlockID) {
 	s.currentChannel = nil
 	s.channelQueue = nil
 	s.txChannels = make(map[string]*channel)
+	s.altDACommitments = make(map[derive.ChannelID]map[uint16]txData)
+	s.altDAChannelCursor = 0
+	s.altDANextChannelFrame = 0
 }
 
 func (s *channelManager) pendingBlocks() int {
@@ -103,6 +121,14 @@ func (s *channelManager) TxFailed(_id txID) {
 	if channel, ok := s.txChannels[id]; ok {
 		delete(s.txChannels, id)
 		channel.TxFailed(id)
+		for i := range s.channelQueue {
+			if s.channelQueue[i] == channel {
+				s.log.Debug("rewinding altDAChannelCursor", "prevAltDAChannelCursor", s.altDAChannelCursor, "prevAltDANextChannelFrame", s.altDANextChannelFrame, "nextAltDAChannelCursor", i, "nextAltDANextChannelFrame", 0)
+				s.altDAChannelCursor = i
+				s.altDANextChannelFrame = 0
+				break
+			}
+		}
 	} else {
 		s.log.Warn("transaction from unknown channel marked as failed", "id", id)
 	}
@@ -124,6 +150,25 @@ func (s *channelManager) TxConfirmed(_id txID, inclusionBlock eth.BlockID) {
 	}
 	s.metr.RecordBatchTxSubmitted()
 	s.log.Debug("marked transaction as confirmed", "id", id, "block", inclusionBlock)
+}
+
+// SaveAltDABlobCommitment saves the altDA commitment data for a given channel and frame number.
+// It should be called after a put call to store a blob on an altda layer.
+// Commitments are then pulled out in order from calls to TxData() and sent to L1.
+func (s *channelManager) SaveAltDABlobCommitment(txdata txData, commitmentData altda.CommitmentData) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if len(txdata.frames) == 0 {
+		panic("txData has no frames")
+	}
+	channelID := txdata.frames[0].id.chID
+	frameNum := txdata.frames[0].id.frameNumber
+	if _, ok := s.altDACommitments[channelID]; !ok {
+		s.altDACommitments[channelID] = make(map[uint16]txData)
+	}
+	txdata.altDACommitment = commitmentData
+	s.altDACommitments[channelID][frameNum] = txdata
+	s.log.Debug("Saved altDA commitment data in channelManager", "channelID", channelID, "frameNum", frameNum, "len(altDACommitments)", len(s.altDACommitments))
 }
 
 // rewindToBlock updates the blockCursor to point at
@@ -161,6 +206,10 @@ func (s *channelManager) handleChannelInvalidated(c *channel) {
 	// Trim provided channel and any older channels:
 	for i := range s.channelQueue {
 		if s.channelQueue[i] == c {
+			for j := i; j < len(s.channelQueue); j++ {
+				delete(s.altDACommitments, s.channelQueue[j].ID())
+			}
+			s.altDAChannelCursor = i
 			s.channelQueue = s.channelQueue[:i]
 			break
 		}
@@ -188,6 +237,51 @@ func (s *channelManager) nextTxData(channel *channel) (txData, error) {
 	return tx, nil
 }
 
+// nextAltDATxData retrieves the next altDA commitment data ready to be submitted to L1, if any.
+// It will only return the next commitment that should be sent to L1 to make sure
+// that frames follow holocene's strict ordering rule.
+func (s *channelManager) nextAltDATxData() (txData, bool) {
+	if s.altDAChannelCursor >= len(s.channelQueue) {
+		s.log.Debug("no nextAltDATxData: channelCursor >= len(s.channelQueue)", "altDAChannelCursor", s.altDAChannelCursor, "len(channelQueue)", len(s.channelQueue))
+		return emptyTxData, false
+	}
+	channel := s.channelQueue[s.altDAChannelCursor]
+	if channel == nil {
+		panic("nil channel stored in channelQueue")
+	}
+	channelID := channel.ID()
+	if channelAltDACommitments, ok := s.altDACommitments[channelID]; ok {
+		if txData, ok := channelAltDACommitments[s.altDANextChannelFrame]; ok {
+			txDataFramesLen := len(txData.frames)
+			if txDataFramesLen == 0 {
+				panic("txData has no frames")
+			}
+			if txData.altDACommitment == nil {
+				panic("txData has no altDA commitment")
+			}
+			// we have the next commitment to send to L1, we just need to update the cursors
+			nextChannelID := txData.frames[txDataFramesLen-1].id.chID
+			lastFrameNum := txData.frames[txDataFramesLen-1].id.frameNumber
+			for i, channel := range s.channelQueue {
+				if channel.ID() == nextChannelID {
+					if channel.TotalFrames()-1 == int(lastFrameNum) {
+						s.altDAChannelCursor = i + 1
+						s.altDANextChannelFrame = 0
+					} else {
+						s.altDAChannelCursor = i
+						s.altDANextChannelFrame = lastFrameNum + 1
+					}
+					s.log.Debug("returning cached altda commitment txData", "altDAChannelCursor", s.altDAChannelCursor, "altDANextChannelFrame", s.altDANextChannelFrame, "channelQueue", s.channelQueue, "txDataCommitment", txData.altDACommitment.String())
+					return txData, true
+				}
+			}
+			panic("next channel not found in channelQueue")
+		}
+	}
+	s.log.Debug("no nextAltDATxData: next commitment not cached yet", "altDAChannelCursor", s.altDAChannelCursor, "altDANextChannelFrame", s.altDANextChannelFrame)
+	return emptyTxData, false
+}
+
 // TxData returns the next tx data that should be submitted to L1.
 //
 // If the current channel is
@@ -200,6 +294,12 @@ func (s *channelManager) nextTxData(channel *channel) (txData, error) {
 func (s *channelManager) TxData(l1Head eth.BlockID) (txData, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	// Check if there is any altDA commitment data ready to send
+	txData, ok := s.nextAltDATxData()
+	if ok {
+		return txData, nil
+	}
+
 	channel, err := s.getReadyChannel(l1Head)
 	if err != nil {
 		return emptyTxData, err
@@ -257,7 +357,7 @@ func (s *channelManager) getReadyChannel(l1Head eth.BlockID) (*channel, error) {
 	}
 
 	dataPending := firstWithTxData != nil
-	s.log.Debug("Requested tx data", "l1Head", l1Head, "txdata_pending", dataPending, "blocks_pending", s.blocks.Len())
+	s.log.Debug("Requested tx data", "l1Head", l1Head, "txdata_pending", dataPending, "blocks_pending", s.pendingBlocks())
 
 	// Short circuit if there is pending tx data or the channel manager is closed
 	if dataPending {
@@ -533,9 +633,11 @@ func (s *channelManager) pruneChannels(newSafeHead eth.L2BlockRef) {
 		if ch.LatestL2().Number > newSafeHead.Number {
 			break
 		}
+		delete(s.altDACommitments, ch.ID())
 		i++
 	}
 	s.channelQueue = s.channelQueue[i:]
+	s.altDAChannelCursor -= i
 }
 
 // PendingDABytes returns the current number of bytes pending to be written to the DA layer (from blocks fetched from L2
