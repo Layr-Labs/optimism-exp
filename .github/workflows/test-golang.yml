@@ -19,7 +19,7 @@ jobs:
       - name: Install and run golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.61.0 
+          version: v1.61.0
           args: -E goimports,sqlclosecheck,bodyclose,asciicheck,misspell,errorlint --timeout 5m -e "errors.As" -e "errors.Is" ./...
 
   go-tests:
@@ -34,6 +34,13 @@ jobs:
           - op-e2e/actions/altda
     steps:
       - uses: actions/checkout@v4
+
+      - uses: jdx/mise-action@v2
+        with:
+          version: 2024.12.14 # [default: latest] mise version to install
+          install: true # [default: true] run `mise install`
+          cache: true # [default: true] cache mise using GitHub's cache
+          experimental: true # [default: false] enable experimental features
 
       - name: Set up Go
         uses: actions/setup-go@v4
