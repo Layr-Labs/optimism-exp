@@ -75,6 +75,16 @@ jobs:
           echo "Cache restore failed"
           exit 1
 
+      # We use mise to install golang instead of the setup-go action,
+      # so we need to do the cache setup ourselves
+      - name: Go Module Cache
+        uses: actions/cache@v3
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
       - name: Run tests
         run: |
           go test -timeout=10m ./${{ matrix.packages }}/...
