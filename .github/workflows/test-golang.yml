@@ -77,5 +77,4 @@ jobs:
 
       - name: Run tests
         run: |
-          cd op-e2e && make pre-test && cd ..
           go test -timeout=10m ./${{ matrix.packages }}/...
