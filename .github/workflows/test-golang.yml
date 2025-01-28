@@ -19,7 +19,7 @@ jobs:
       - name: Install and run golangci-lint
         uses: golangci/golangci-lint-action@v3
         with:
-          version: v1.55.2
+          version: v1.61.0 
           args: -E goimports,sqlclosecheck,bodyclose,asciicheck,misspell,errorlint --timeout 5m -e "errors.As" -e "errors.Is" ./...
 
   go-tests:
