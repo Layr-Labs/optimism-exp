@@ -69,6 +69,7 @@ jobs:
           path: packages/contracts-bedrock/forge-artifacts
           key: ${{ runner.os }}-forge-${{ hashFiles('packages/contracts-bedrock/src/**/*.sol') }}
 
+      # Cache has been stored in the build-and-cache-contracts job, so if this fails there's a problem
       - name: Check cache restore
         if: steps.cache-restore.outputs.cache-hit != 'true'
         run: |
@@ -79,11 +80,18 @@ jobs:
       # so we need to do the cache setup ourselves
       - name: Go Module Cache
         uses: actions/cache@v3
+        id: go-cache
         with:
           path: ~/go/pkg/mod
           key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
           restore-keys: |
             ${{ runner.os }}-go-
+
+      # Add explicit download on cache miss
+      # go test runs `go mod download` implicitly, but this separation is nice to see how long downloading vs running tests takes
+      - name: Download Go modules
+        if: steps.go-cache.outputs.cache-hit != 'true'
+        run: go mod download
 
       - name: Run tests
         run: |
